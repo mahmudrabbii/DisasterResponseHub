@@ -100,6 +100,7 @@ CREATE TABLE beneficiaries (
     family_size INT,
     location_id INT,
     disaster_id INT,
+    aid_received VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (person_id) REFERENCES people(id),
     FOREIGN KEY (location_id) REFERENCES locations(id),

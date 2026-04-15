@@ -12,6 +12,36 @@ use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
+    private function ensureVolunteerRecord(People $person): void
+    {
+        $user = User::where('person_id', $person->id)->first();
+
+        if (!$user || $user->role !== 'volunteer') {
+            return;
+        }
+
+        DB::table('volunteers')->updateOrInsert(
+            ['person_id' => $person->id],
+            [
+                'skills' => DB::table('volunteers')->where('person_id', $person->id)->value('skills'),
+                'availability' => DB::table('volunteers')->where('person_id', $person->id)->value('availability') ?? 'available',
+            ]
+        );
+    }
+
+    private function redirectAfterAuthentication(User $user, string $message)
+    {
+        if ($user->role === 'admin') {
+            $targetRoute = 'admin.dashboard';
+        } elseif ($user->role === 'volunteer') {
+            $targetRoute = 'volunteer.dashboard';
+        } else {
+            $targetRoute = 'dashboard';
+        }
+
+        return redirect()->route($targetRoute)->with('status', $message);
+    }
+
     /**
      * Show the registration form.
      */
@@ -39,7 +69,6 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
         // Get the person ID
@@ -51,15 +80,18 @@ class AuthController extends Controller
             'role' => $validated['role'],
             'password' => Hash::make($validated['password']),
             'created_at' => now(),
-            'updated_at' => now(),
         ]);
+
+        if ($validated['role'] === 'volunteer') {
+            $this->ensureVolunteerRecord($person);
+        }
 
         $user = User::where('person_id', $person->id)->first();
 
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('dashboard')->with('status', 'Registration successful. Welcome!');
+        return $this->redirectAfterAuthentication($user, 'Registration successful. Welcome!');
     }
 
     /**
@@ -102,7 +134,11 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('dashboard')->with('status', 'Login successful.');
+        if ($user->role === 'volunteer') {
+            $this->ensureVolunteerRecord($person);
+        }
+
+        return $this->redirectAfterAuthentication($user, 'Login successful.');
     }
 
     /**
