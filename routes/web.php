@@ -44,6 +44,7 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::get('/admin/weather', [App\Http\Controllers\AdminController::class, 'weather'])->name('admin.weather');
 
 Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'users'])->name('admin.users');
 Route::post('/admin/users', [App\Http\Controllers\AdminController::class, 'storeUser'])->name('admin.users.store');

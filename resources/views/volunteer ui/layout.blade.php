@@ -63,7 +63,7 @@
 
 			@if (!empty($alerts) && count($alerts) > 0)
 				<div class="alerts-section">
-					<h3 class="alerts-title">Recent Notifications</h3>
+					<h3 class="alerts-title">Recent Alerts</h3>
 					<div class="alerts-grid">
 						@foreach ($alerts as $alert)
 							<div class="alert-card">

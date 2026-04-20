@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\People;
 use App\Models\User;
+use App\Services\WeatherService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +35,7 @@ class AdminController extends Controller
             'total_users' => DB::table('users')->count(),
             'total_admins' => DB::table('users')->where('role', 'admin')->count(),
             'total_officials' => DB::table('users')->where('role', 'official')->count(),
-            'total_volunteers' => DB::table('users')->where('role', 'volunteer')->count(),
+            'total_volunteers' => DB::table('volunteers')->count(),
             'total_disasters' => DB::table('disasters')->count(),
             'total_resources' => (int) DB::table('resources')->sum('quantity'),
             'total_donations' => (float) DB::table('fundraising')->sum('amount'),
@@ -57,6 +58,28 @@ class AdminController extends Controller
             'activePage' => $activePage,
             'stats' => $this->dashboardStats(),
         ];
+    }
+
+    private function dashboardWeatherQuery(): string
+    {
+        $location = DB::table('disasters as d')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->orderByDesc('d.created_at')
+            ->select('l.city', 'l.district', 'l.country')
+            ->first();
+
+        return trim(collect([
+            $location->city ?? null,
+            $location->district ?? null,
+            $location->country ?? null,
+        ])->filter()->implode(', '));
+    }
+
+    private function dashboardWeather(): ?array
+    {
+        $weatherService = app(WeatherService::class);
+
+        return $weatherService->fetchByQuery($this->dashboardWeatherQuery());
     }
 
     public function dashboard()
@@ -84,7 +107,25 @@ class AdminController extends Controller
             'recentUsers' => $users,
             'recentDisasters' => $disasters,
             'recentResources' => $resources,
+            'weather' => $this->dashboardWeather(),
+            'weatherQuery' => $this->dashboardWeatherQuery(),
         ]));
+    }
+
+    public function weather(Request $request)
+    {
+        $validated = $request->validate([
+            'query' => ['required', 'string', 'max:255'],
+        ]);
+
+        $query = trim($validated['query']);
+        $weather = app(WeatherService::class)->fetchByQuery($query);
+
+        return response()->json([
+            'query' => $query,
+            'weather' => $weather,
+            'message' => $weather ? 'Weather loaded successfully.' : 'Weather data is unavailable for that location.',
+        ]);
     }
 
     public function users()
@@ -262,9 +303,15 @@ class AdminController extends Controller
                 'status' => $validated['status'],
                 'created_at' => now(),
             ]);
+
+            DB::table('alerts')->insert([
+                'title' => 'New Disaster Reported',
+                'message' => 'A new ' . $validated['type'] . ' disaster has been reported in ' . $validated['city'] . ', ' . $validated['district'] . '. Please review the volunteer dashboard for updates.',
+                'created_at' => now(),
+            ]);
         });
 
-        return redirect()->route('admin.disasters')->with('status', 'Disaster added successfully.');
+        return redirect()->route('admin.disasters')->with('status', 'Disaster added and volunteer alert published successfully.');
     }
 
     public function updateDisaster(Request $request, int $disasterId)
