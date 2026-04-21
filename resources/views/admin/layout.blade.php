@@ -45,9 +45,11 @@
         <header class="topbar">
             <label class="sidebar-toggle" for="admin-sidebar-toggle">Menu</label>
             <div class="topbar-copy">
+                <!--
                 <span class="eyebrow">Administration</span>
+                -->
                 <h1>@yield('page-title', 'Dashboard')</h1>
-                <p>@yield('page-subtitle', 'Manage users, disasters, volunteers, stock, and affected people from one place.') </p>
+                <p>@yield('page-subtitle', 'Manage users, disasters, volunteers, stock and affected people from one place.') </p>
             </div>
         </header>
 
@@ -66,6 +68,10 @@
 
             @yield('content')
         </main>
+
+        <footer class="layout-footer">
+            <p>&copy; {{ date('Y') }} Disaster Response Hub. All rights reserved.</p>
+        </footer>
     </div>
 
     <label class="sidebar-backdrop" for="admin-sidebar-toggle" aria-hidden="true"></label>

@@ -78,6 +78,10 @@
 
 			@yield('content')
 		</main>
+
+		<footer class="layout-footer">
+			<p>&copy; {{ date('Y') }} Disaster Response Hub. All rights reserved.</p>
+		</footer>
 	</div>
 </div>
 
