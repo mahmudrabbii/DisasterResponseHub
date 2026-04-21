@@ -1,64 +1,356 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Disaster Response Hub (DRH)
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The **Disaster Response Hub (DRH)** is a disaster management system designed to coordinate disaster response activities including incident reporting, volunteer coordination, fundraising, aid distribution, and emergency requests.
 
-## About Laravel
+The platform helps administrators, officials, and volunteers collaborate efficiently during disasters such as floods, cyclones, or earthquakes.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# Project Purpose
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Disasters require quick coordination between responders, volunteers, and affected communities. The **DRH system** centralizes disaster information and response activities to improve decision-making and resource allocation.
 
-## Learning Laravel
+The system provides a structured workflow for reporting disasters, managing relief resources, assigning volunteers, and distributing aid to beneficiaries.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# User Roles
 
-## Laravel Sponsors
+## Admin
+- Manage users and system settings
+- Monitor disasters and incidents
+- Create alerts and policies
+- Manage resources and aid distribution
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Officials
+- Report disasters
+- Create and update incidents
+- Coordinate volunteers
+- Manage beneficiaries and aid distribution
 
-### Premium Partners
+## Volunteers
+- Participate in disaster response
+- Accept assignments
+- Contribute to relief operations
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+---
 
-## Contributing
+# System Modules
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 1. Location Management
+Stores geographic information about affected areas.
 
-## Code of Conduct
+Table:
+- locations
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Fields:
+- city
+- district
+- country
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 2. People and User Management
 
-## License
+The system separates personal information and login accounts.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Tables:
+- people
+- users
+
+People table stores:
+- name
+- email
+- phone
+
+Users table stores:
+- login credentials
+- user roles (admin, official, volunteer)
+
+---
+
+## 3. Disaster Management
+
+Tracks disasters and their impact.
+
+Table:
+- disasters
+
+Fields:
+- disaster type
+- location
+- disaster date
+- affected population
+- disaster status
+
+Statuses:
+- pending
+- in_progress
+- resolved
+
+---
+
+## 4. Incident Reporting
+
+Each disaster may contain multiple incidents.
+
+Table:
+- incidents
+
+Examples:
+- water overflow
+- road damage
+- infrastructure destruction
+
+Severity levels:
+- low
+- medium
+- high
+
+---
+
+## 5. Volunteer Management
+
+Tracks volunteers and their assignments.
+
+Tables:
+- volunteers
+- volunteer_assignments
+
+Volunteer data:
+- skills
+- availability
+
+Assignment data:
+- disaster involved
+- hours worked
+- assignment date
+
+---
+
+## 6. Fundraising and Donations
+
+Manages disaster fundraising activities.
+
+Table:
+- fundraising
+
+Roles:
+- donor
+- organizer
+
+Each campaign is linked to a disaster.
+
+---
+
+## 7. Resource Management
+
+Tracks available disaster relief resources.
+
+Table:
+- resources
+
+Examples:
+- food supplies
+- medicine
+- water supplies
+
+Fields:
+- resource name
+- category
+- quantity
+- expiry date
+
+---
+
+## 8. Aid Distribution
+
+Tracks beneficiaries and aid distribution.
+
+Tables:
+- beneficiaries
+- aid_types
+- beneficiary_aid
+
+Aid types include:
+- food package
+- medical kit
+- water supply
+
+The system records:
+- aid received
+- quantity
+- distribution date
+
+---
+
+## 9. Aid Request System
+
+Allows affected individuals to request assistance.
+
+Table:
+- aid_requests
+
+Statuses:
+- pending
+- approved
+- rejected
+- completed
+
+---
+
+## 10. SOS Emergency Requests
+
+Allows people to send urgent rescue requests.
+
+Table:
+- sos_requests
+
+Statuses:
+- pending
+- responded
+- resolved
+
+---
+
+## 11. Alert System
+
+Allows administrators to broadcast emergency alerts.
+
+Table:
+- alerts
+
+Examples:
+- flood warnings
+- cyclone alerts
+
+---
+
+## 12. Policy Management
+
+Stores disaster response policies and guidelines.
+
+Table:
+- policies
+
+Example:
+- flood response policy
+
+---
+
+# Database Tables
+
+The system uses the following main tables:
+
+```
+locations
+people
+users
+disasters
+incidents
+volunteers
+volunteer_assignments
+fundraising
+resources
+beneficiaries
+aid_types
+beneficiary_aid
+aid_requests
+sos_requests
+alerts
+policies
+```
+
+---
+
+# Technologies Used
+
+Backend
+- PHP
+- Laravel Framework
+
+Frontend
+- HTML
+- CSS
+- Bootstrap
+
+Database
+- MySQL
+
+Tools
+- VS Code
+- Git
+- phpMyAdmin
+
+---
+
+# How to Run the Project
+
+## 1 Clone the repository
+
+```
+git clone https://github.com/yourusername/drh.git
+```
+
+## 2 Navigate to project folder
+
+```
+cd drh
+```
+
+## 3 Install dependencies
+
+```
+composer install
+```
+
+## 4 Setup environment file
+
+```
+cp .env.example .env
+```
+
+Update database credentials inside `.env`.
+
+---
+
+## 5 Import Database
+
+Import the SQL file into MySQL:
+
+```
+disaster_response_hub.sql
+```
+
+---
+
+## 6 Start the Laravel server
+
+```
+php artisan serve
+```
+
+Open in browser:
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+# Future Improvements
+
+Possible system improvements include:
+
+- Real-time disaster map
+- SMS alert system
+- Mobile application
+- AI-based disaster prediction
+- Volunteer GPS tracking
+- Weather API integration
+
+---
+
+# Author
+
+Md. Fazle Rabbi Mahmud
