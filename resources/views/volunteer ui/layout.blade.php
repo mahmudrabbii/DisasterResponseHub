@@ -11,7 +11,9 @@
 <div class="volunteer-shell" data-volunteer-shell>
 	<aside class="sidebar">
 		<div class="brand-block">
-			<div class="brand-mark">DRH</div>
+			<div class="brand-mark">
+				<img class="brand-logo" src="{{ asset('assets/DRH Logo.png') }}" alt="DRH Logo">
+			</div>
 			<div>
 				<h2>Volunteer Hub</h2>
 				<p>Relief coordination workspace</p>
@@ -27,9 +29,12 @@
 		</nav>
 
 		<div class="sidebar-card">
-			<span class="sidebar-label">Signed in as</span>
-			<strong>{{ optional(auth()->user()->person)->name ?? 'Volunteer' }}</strong>
-			<span>{{ ucfirst(auth()->user()->role ?? 'volunteer') }}</span>
+			<strong>Signed in as {{ optional(auth()->user()->person)->name ?? 'Volunteer' }}</strong>
+
+			<form method="POST" action="{{ route('logout') }}" class="logout-form">
+				@csrf
+				<button type="submit" class="logout-btn">Logout</button>
+			</form>
 		</div>
 	</aside>
 
@@ -41,11 +46,6 @@
 				<h1>@yield('page-title', 'Dashboard')</h1>
 				<p>@yield('page-subtitle', 'Manage your assignments, profile, and relief requests from one place.') </p>
 			</div>
-
-			<form method="POST" action="{{ route('logout') }}" class="logout-form">
-				@csrf
-				<button type="submit" class="logout-btn">Logout</button>
-			</form>
 		</header>
 
 		<main class="content">

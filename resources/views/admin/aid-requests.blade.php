@@ -50,9 +50,9 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="person_id">Affected Person</label>
+                            <label for="person_id">Aid Requested By</label>
                             <select id="person_id" name="person_id" required>
-                                <option value="">-- Select person --</option>
+                                <option value="">Select person</option>
                                 @foreach ($people as $person)
                                     <option value="{{ $person->id }}" {{ (string) old('person_id') === (string) $person->id ? 'selected' : '' }}>
                                         {{ $person->name }} ({{ $person->email ?? 'N/A' }})
@@ -64,7 +64,7 @@
                         <div class="form-group">
                             <label for="location_id">Location</label>
                             <select id="location_id" name="location_id" required>
-                                <option value="">-- Select location --</option>
+                                <option value="">Select location</option>
                                 @foreach ($locations as $location)
                                     <option value="{{ $location->id }}" {{ (string) old('location_id') === (string) $location->id ? 'selected' : '' }}>
                                         {{ $location->city }}, {{ $location->district }}
@@ -78,7 +78,7 @@
                         <div class="form-group">
                             <label for="aid_type_id">Aid Type</label>
                             <select id="aid_type_id" name="aid_type_id" required>
-                                <option value="">-- Select aid type --</option>
+                                <option value="">Select aid type</option>
                                 @foreach ($aidTypes as $aidType)
                                     <option value="{{ $aidType->id }}" {{ (string) old('aid_type_id') === (string) $aidType->id ? 'selected' : '' }}>
                                         {{ $aidType->name }}

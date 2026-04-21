@@ -58,9 +58,11 @@
 
             <div class="form-group">
                 <label for="status">Status</label>
-                @php($statusValue = old('status', $editingDisaster->status ?? 'pending'))
+                @php($statusValue = old('status', $editingDisaster->status ?? 'in_progress'))
                 <select id="status" name="status" required>
+                    <!--
                     <option value="pending" {{ $statusValue === 'pending' ? 'selected' : '' }}>Pending</option>
+                    -->
                     <option value="in_progress" {{ $statusValue === 'in_progress' ? 'selected' : '' }}>Active</option>
                     <option value="resolved" {{ $statusValue === 'resolved' ? 'selected' : '' }}>Resolved</option>
                 </select>

@@ -61,7 +61,7 @@
             </div>
 
             <div class="form-group form-wide">
-                <label for="aid_received">Aid received</label>
+                <label for="aid_received">Aid Support</label>
                 <input id="aid_received" name="aid_received" type="text" value="{{ old('aid_received', $editingAffected->aid_received ?? '') }}" placeholder="Food package, medical kit, water supply">
             </div>
 

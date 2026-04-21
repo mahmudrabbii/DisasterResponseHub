@@ -9,14 +9,17 @@
 </head>
 <body>
 <div class="admin-shell" data-admin-shell>
+    <input class="sidebar-toggle-state" type="checkbox" id="admin-sidebar-toggle" aria-hidden="true">
     <aside class="admin-sidebar">
-        <div class="brand-block">
-            <div class="brand-mark">DRH</div>
+        <a class="brand-block" href="{{ route('admin.dashboard') }}" aria-label="Go to admin dashboard">
+            <div class="brand-mark">
+                <img class="brand-logo" src="{{ asset('assets/DRH Logo.png') }}" alt="DRH Logo">
+            </div>
             <div>
                 <h2>Admin Panel</h2>
                 <p>Operations and management</p>
             </div>
-        </div>
+        </a>
 
         <nav class="nav-links">
             <a class="nav-link {{ ($activePage ?? '') === 'dashboard' ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
@@ -29,25 +32,23 @@
         </nav>
 
         <div class="sidebar-card">
-            <span class="sidebar-label">Signed in as</span>
-            <strong>{{ optional(auth()->user()->person)->name ?? 'Admin' }}</strong>
-            <span>{{ ucfirst(auth()->user()->role ?? 'admin') }}</span>
-        </div>
-    </aside>
-
-    <div class="workspace">
-        <header class="topbar">
-            <button class="sidebar-toggle" type="button" data-toggle-sidebar>Menu</button>
-            <div class="topbar-copy">
-                <span class="eyebrow">Administration</span>
-                <h1>@yield('page-title', 'Dashboard')</h1>
-                <p>@yield('page-subtitle', 'Manage users, disasters, volunteers, stock, and affected people from one place.') </p>
-            </div>
+            <strong>Signed in as {{ optional(auth()->user()->person)->name ?? 'Admin' }}</strong>
 
             <form method="POST" action="{{ route('logout') }}" class="logout-form">
                 @csrf
                 <button type="submit" class="logout-btn">Logout</button>
             </form>
+        </div>
+    </aside>
+
+    <div class="workspace">
+        <header class="topbar">
+            <label class="sidebar-toggle" for="admin-sidebar-toggle">Menu</label>
+            <div class="topbar-copy">
+                <span class="eyebrow">Administration</span>
+                <h1>@yield('page-title', 'Dashboard')</h1>
+                <p>@yield('page-subtitle', 'Manage users, disasters, volunteers, stock, and affected people from one place.') </p>
+            </div>
         </header>
 
         <main class="content">
@@ -66,19 +67,8 @@
             @yield('content')
         </main>
     </div>
+
+    <label class="sidebar-backdrop" for="admin-sidebar-toggle" aria-hidden="true"></label>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var shell = document.querySelector('[data-admin-shell]');
-        var button = document.querySelector('[data-toggle-sidebar]');
-
-        if (shell && button) {
-            button.addEventListener('click', function () {
-                shell.classList.toggle('sidebar-open');
-            });
-        }
-    });
-</script>
 </body>
 </html>

@@ -55,20 +55,27 @@ a {
 .brand-block {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 18px;
 }
 
 .brand-mark {
-    width: 52px;
-    height: 52px;
+    width: 112px;
+    height: 112px;
     border-radius: 16px;
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, var(--accent), #155e75);
-    color: #fff;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    box-shadow: 0 12px 24px rgba(15, 118, 110, 0.35);
+    background: transparent;
+    overflow: hidden;
+    box-shadow: none;
+}
+
+.brand-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: inherit;
+    display: block;
+    transform: scale(1.24);
 }
 
 .brand-block h2,
@@ -76,6 +83,12 @@ a {
 .panel-card h3,
 .hero-panel h2 {
     margin: 0;
+}
+
+.brand-block h2 {
+    font-size: 1.55rem;
+    line-height: 1.1;
+    font-weight: 800;
 }
 
 .brand-block p,
@@ -116,6 +129,14 @@ a {
     border: 1px solid rgba(255, 255, 255, 0.08);
     display: grid;
     gap: 4px;
+}
+
+.sidebar-card .logout-form {
+    margin-top: 10px;
+}
+
+.sidebar-card .logout-btn {
+    width: 100%;
 }
 
 .sidebar-label,
