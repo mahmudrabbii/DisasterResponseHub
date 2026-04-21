@@ -8,7 +8,10 @@
 </head>
 <body>
 <div class="container register-container">
-    <div class="logo"><h2>DisasterResponseHub</h2></div>
+    <div class="logo">
+        <img class="logo-mark" src="{{ asset('assets/DRH Logo.png') }}" alt="Disaster Response Hub Logo">
+        <h2>DisasterResponseHub</h2>
+    </div>
     <h1>Create Account</h1>
     <p class="subtitle">Register and join the relief network</p>
 

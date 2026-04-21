@@ -8,7 +8,10 @@
 </head>
 <body>
 <div class="container">
-    <div class="logo"><h2>Disaster Response Hub</h2></div>
+    <div class="logo">
+        <img class="logo-mark" src="{{ asset('assets/DRH Logo.png') }}" alt="Disaster Response Hub Logo">
+        <h2>Disaster Response Hub</h2>
+    </div>
     <h1>Sign In</h1>
     <p class="subtitle">Enter your credentials to access your account</p>
 
