@@ -11,22 +11,25 @@
 <body>
 <div class="volunteer-shell" data-volunteer-shell>
 	<aside class="sidebar">
-		<div class="brand-block">
-			<div class="brand-mark">
-				<img class="brand-logo" src="{{ asset('assets/DRH Logo.png') }}" alt="DRH Logo">
+		<a href="{{ route('volunteer.dashboard') }}" class="brand-block-link">
+			<div class="brand-block">
+				<div class="brand-mark">
+					<img class="brand-logo" src="{{ asset('assets/DRH Logo.png') }}" alt="DRH Logo">
+				</div>
+				<div>
+					<h2>Volunteer Hub</h2>
+					<p>Relief coordination workspace</p>
+				</div>
 			</div>
-			<div>
-				<h2>Volunteer Hub</h2>
-				<p>Relief coordination workspace</p>
-			</div>
-		</div>
+		</a>
 
 		<nav class="nav-links">
 			<a class="nav-link {{ ($activePage ?? '') === 'dashboard' ? 'active' : '' }}" href="{{ route('volunteer.dashboard') }}">Volunteer Dashboard</a>
 			<a class="nav-link {{ ($activePage ?? '') === 'tasks' ? 'active' : '' }}" href="{{ route('volunteer.tasks') }}">Assigned Tasks</a>
 			<a class="nav-link {{ ($activePage ?? '') === 'profile' ? 'active' : '' }}" href="{{ route('volunteer.profile') }}">Profile</a>
 			<a class="nav-link {{ ($activePage ?? '') === 'aid-request' ? 'active' : '' }}" href="{{ route('volunteer.aid-requests') }}">Aid Request</a>
-			<a class="nav-link {{ ($activePage ?? '') === 'disaster-data' ? 'active' : '' }}" href="{{ route('volunteer.disaster-data') }}">Disaster Data</a>
+			<a class="nav-link {{ ($activePage ?? '') === 'disaster-data' ? 'active' : '' }}" href="{{ route('volunteer.disaster-data') }}">Disaster Details</a>
+			<a class="nav-link {{ ($activePage ?? '') === 'disaster-submissions' ? 'active' : '' }}" href="{{ route('volunteer.disaster-submissions') }}">Submit Disaster Data</a>
 		</nav>
 
 		<div class="sidebar-card">

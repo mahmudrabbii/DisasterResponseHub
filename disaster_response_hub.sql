@@ -148,12 +148,55 @@ CREATE TABLE policies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE volunteer_disaster_submissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    person_id INT NOT NULL,
+    disaster_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description LONGTEXT NOT NULL,
+    submission_type ENUM('incident_report','damage_assessment','resource_need','population_data','other') NOT NULL DEFAULT 'incident_report',
+    status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    admin_notes LONGTEXT NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (person_id) REFERENCES people(id) ON DELETE CASCADE,
+    FOREIGN KEY (disaster_id) REFERENCES disasters(id) ON DELETE CASCADE,
+    
+    INDEX idx_person_id (person_id),
+    INDEX idx_disaster_id (disaster_id),
+    INDEX idx_status (status)
+);
+
 CREATE TABLE alerts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(150),
     message TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE `volunteer_disaster_submissions` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `person_id` INT NOT NULL,
+    `disaster_id` INT NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `description` LONGTEXT NOT NULL,
+    `submission_type` ENUM('incident_report','damage_assessment','resource_need','population_data','other') NOT NULL DEFAULT 'incident_report',
+    `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    `admin_notes` LONGTEXT NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (`person_id`) REFERENCES `people` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`disaster_id`) REFERENCES `disasters` (`id`) ON DELETE CASCADE,
+    
+    INDEX `idx_person_id` (`person_id`),
+    INDEX `idx_disaster_id` (`disaster_id`),
+    INDEX `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 
 INSERT INTO locations (city, district, country) VALUES
 ('Dhaka', 'Dhaka', 'Bangladesh'),

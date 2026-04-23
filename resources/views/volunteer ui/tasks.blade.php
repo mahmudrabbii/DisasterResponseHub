@@ -2,34 +2,40 @@
 
 @section('title', 'Assigned Tasks - DisasterResponseHub')
 @section('page-title', 'Assigned Tasks')
-@section('page-subtitle', 'Review each disaster assignment with its location, incidents, and working hours.')
+@section('page-subtitle', 'Review each disaster assignment and accept work to confirm your participation.')
 
 @section('content')
     <section class="stack-grid">
         @forelse ($tasks as $task)
             <article class="panel-card task-card">
-                <div class="panel-header">
-                    <div>
+                <div class="panel-header task-header">
+                    <div class="task-heading">
+                        <span class="task-kicker">Assigned Disaster</span>
                         <h3>{{ $task->disaster_type }}</h3>
-                        <p>{{ $task->city ?? 'Unknown city' }}, {{ $task->district ?? 'Unknown district' }}</p>
+                        <p class="task-location">{{ $task->city ?? 'Unknown city' }}, {{ $task->district ?? 'Unknown district' }}</p>
                     </div>
                     <span class="status-pill status-{{ $task->disaster_status }}">{{ $task->disaster_status }}</span>
                 </div>
 
+                <div class="task-summary-line">
+                    <strong>Disaster Snapshot</strong>
+                    <span>{{ ($taskIncidents[$task->disaster_id] ?? collect())->count() }} linked incidents</span>
+                </div>
+
                 <div class="task-meta-grid">
-                    <div>
+                    <div class="task-fact">
                         <span class="meta-label">Assigned date</span>
                         <strong>{{ $task->assigned_date }}</strong>
                     </div>
-                    <div>
+                    <div class="task-fact">
                         <span class="meta-label">Affected population</span>
                         <strong>{{ number_format($task->affected_population) }}</strong>
                     </div>
-                    <div>
+                    <div class="task-fact">
                         <span class="meta-label">Hours worked</span>
-                        <strong>{{ $task->hours_worked }}</strong>
+                        <strong>{{ $task->hours_worked }} hrs</strong>
                     </div>
-                    <div>
+                    <div class="task-fact">
                         <span class="meta-label">Disaster date</span>
                         <strong>{{ $task->disaster_date }}</strong>
                     </div>
@@ -48,21 +54,19 @@
                     @endforelse
                 </div>
 
-                <form method="POST" action="{{ route('volunteer.tasks.update-hours', $task->assignment_id) }}" class="inline-form">
+                @php
+                    $isAccepted = in_array((int) $task->assignment_id, $acceptedAssignments ?? [], true);
+                @endphp
+
+                <form method="POST" action="{{ route('volunteer.tasks.accept', $task->assignment_id) }}" class="inline-form">
                     @csrf
-                    @method('PATCH')
-                    <label for="hours_worked_{{ $task->assignment_id }}">Update hours worked</label>
+                    <label>Work status</label>
                     <div class="inline-controls">
-                        <input
-                            id="hours_worked_{{ $task->assignment_id }}"
-                            name="hours_worked"
-                            type="number"
-                            min="0"
-                            max="1000"
-                            value="{{ $task->hours_worked }}"
-                            required
-                        >
-                        <button type="submit" class="primary-action">Save</button>
+                        @if ($isAccepted)
+                            <span class="status-pill status-completed">Accepted</span>
+                        @else
+                            <button type="submit" class="primary-action">Accept Work</button>
+                        @endif
                     </div>
                 </form>
             </article>

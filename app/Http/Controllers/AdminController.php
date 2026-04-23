@@ -724,4 +724,115 @@ class AdminController extends Controller
 
         return redirect()->route('admin.aid-requests')->with('status', 'Aid request deleted successfully.');
     }
+
+    public function disasterSubmissions(Request $request)
+    {
+        $filter = $request->query('status', 'all');
+        $allowedFilters = ['all', 'pending', 'approved', 'rejected'];
+
+        if (!in_array($filter, $allowedFilters, true)) {
+            $filter = 'all';
+        }
+
+        $query = DB::table('volunteer_disaster_submissions as vds')
+            ->join('people as p', 'vds.person_id', '=', 'p.id')
+            ->join('disasters as d', 'vds.disaster_id', '=', 'd.id')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->orderByDesc('vds.created_at');
+
+        if ($filter !== 'all') {
+            $query->where('vds.status', $filter);
+        }
+
+        $submissions = $query->select(
+            'vds.id',
+            'vds.title',
+            'vds.description',
+            'vds.submission_type',
+            'vds.status',
+            'vds.created_at',
+            'vds.updated_at',
+            'vds.person_id',
+            'vds.disaster_id',
+            'p.name as volunteer_name',
+            'd.type as disaster_type',
+            'l.city',
+            'l.district'
+        )->get();
+
+        // Load relationships and convert timestamps
+        $submissions = $submissions->map(function ($submission) {
+            $submission->person = DB::table('people')->where('id', $submission->person_id)->first();
+            $submission->disaster = DB::table('disasters')
+                ->leftJoin('locations as l', 'disasters.location_id', '=', 'l.id')
+                ->where('disasters.id', $submission->disaster_id)
+                ->select('disasters.*', 'l.city', 'l.district')
+                ->first();
+            
+            // Convert timestamps to Carbon objects
+            $submission->created_at = \Carbon\Carbon::parse($submission->created_at);
+            $submission->updated_at = \Carbon\Carbon::parse($submission->updated_at);
+            
+            return $submission;
+        });
+
+        return view('admin.disaster-submissions', [
+            'activePage' => 'disaster-submissions',
+            'filter' => $filter,
+            'submissions' => $submissions,
+            'stats' => $this->dashboardStats(),
+        ]);
+    }
+
+    public function showDisasterSubmissionReview(int $submissionId)
+    {
+        $submission = DB::table('volunteer_disaster_submissions')
+            ->where('id', $submissionId)
+            ->first();
+
+        abort_if(!$submission, 404);
+
+        $submission->person = DB::table('people')->where('id', $submission->person_id)->first();
+        $submission->disaster = DB::table('disasters')
+            ->leftJoin('locations as l', 'disasters.location_id', '=', 'l.id')
+            ->where('disasters.id', $submission->disaster_id)
+            ->select('disasters.*', 'l.city', 'l.district')
+            ->first();
+
+        // Convert timestamps to Carbon objects
+        $submission->created_at = \Carbon\Carbon::parse($submission->created_at);
+        $submission->updated_at = \Carbon\Carbon::parse($submission->updated_at);
+
+        return view('admin.disaster-submission-review', [
+            'activePage' => 'disaster-submissions',
+            'submission' => $submission,
+            'stats' => $this->dashboardStats(),
+        ]);
+    }
+
+    public function updateDisasterSubmission(Request $request, int $submissionId)
+    {
+        $submission = DB::table('volunteer_disaster_submissions')
+            ->where('id', $submissionId)
+            ->first();
+
+        abort_if(!$submission, 404);
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:approved,rejected'],
+            'admin_notes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        DB::table('volunteer_disaster_submissions')
+            ->where('id', $submissionId)
+            ->update([
+                'status' => $validated['status'],
+                'admin_notes' => $validated['admin_notes'],
+                'updated_at' => now(),
+            ]);
+
+        return redirect()
+            ->route('admin.disaster-submissions')
+            ->with('success', 'Submission reviewed and updated successfully.');
+    }
 }

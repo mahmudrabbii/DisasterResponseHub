@@ -30,6 +30,7 @@
             <a class="nav-link {{ ($activePage ?? '') === 'resources' ? 'active' : '' }}" href="{{ route('admin.resources') }}">Resource Inventory</a>
             <a class="nav-link {{ ($activePage ?? '') === 'affected-people' ? 'active' : '' }}" href="{{ route('admin.affected-people') }}">Affected People</a>
             <a class="nav-link {{ ($activePage ?? '') === 'aid-requests' ? 'active' : '' }}" href="{{ route('admin.aid-requests') }}">Aid Requests</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'disaster-submissions' ? 'active' : '' }}" href="{{ route('admin.disaster-submissions') }}">Volunteer Reports</a>
         </nav>
 
         <div class="sidebar-card">

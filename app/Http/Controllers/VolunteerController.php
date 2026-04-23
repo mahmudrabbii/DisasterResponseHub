@@ -171,10 +171,42 @@ class VolunteerController extends Controller
     public function tasks()
     {
         $personId = $this->volunteerPersonId();
+        $acceptedAssignments = collect(session('accepted_assignments', []))->map(fn ($id) => (int) $id)->all();
 
         return view('volunteer ui.tasks', array_merge([
             'activePage' => 'tasks',
+            'acceptedAssignments' => $acceptedAssignments,
         ], $this->dashboardData($personId)));
+    }
+
+    public function acceptTask(int $assignmentId)
+    {
+        $personId = $this->volunteerPersonId();
+
+        $assignment = DB::table('volunteer_assignments')
+            ->where('id', $assignmentId)
+            ->where('person_id', $personId)
+            ->first();
+
+        abort_if(!$assignment, 404);
+
+        $acceptedAssignments = collect(session('accepted_assignments', []))
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        if (!in_array((int) $assignmentId, $acceptedAssignments, true)) {
+            $acceptedAssignments[] = (int) $assignmentId;
+            session(['accepted_assignments' => $acceptedAssignments]);
+            $message = 'Work accepted successfully.';
+        } else {
+            $message = 'This work is already accepted.';
+        }
+
+        return redirect()
+            ->route('volunteer.tasks')
+            ->with('status', $message);
     }
 
     public function updateTaskHours(Request $request, int $assignmentId)
@@ -185,6 +217,13 @@ class VolunteerController extends Controller
             'hours_worked' => ['required', 'integer', 'min:0', 'max:1000'],
         ]);
 
+        $assignment = DB::table('volunteer_assignments')
+            ->where('id', $assignmentId)
+            ->where('person_id', $personId)
+            ->first();
+
+        abort_if(!$assignment, 404);
+
         $updated = DB::table('volunteer_assignments')
             ->where('id', $assignmentId)
             ->where('person_id', $personId)
@@ -192,11 +231,9 @@ class VolunteerController extends Controller
                 'hours_worked' => $validated['hours_worked'],
             ]);
 
-        abort_unless($updated, 404);
-
         return redirect()
             ->route('volunteer.tasks')
-            ->with('status', 'Task hours updated.');
+            ->with('status', $updated ? 'Task hours updated.' : 'No changes were made to task hours.');
     }
 
     public function profile()
@@ -300,6 +337,116 @@ class VolunteerController extends Controller
             'stats' => $data['stats'],
             'person' => $data['person'],
             'volunteer' => $data['volunteer'],
+        ]);
+    }
+
+    public function showCreateSubmissionForm()
+    {
+        $personId = $this->volunteerPersonId();
+        $data = $this->dashboardData($personId);
+
+        return view('volunteer ui.submit-disaster-data', array_merge([
+            'activePage' => 'disaster-submissions',
+            'disasters' => $data['disasters'],
+        ]));
+    }
+
+    public function storeDisasterSubmission(Request $request)
+    {
+        $personId = $this->volunteerPersonId();
+
+        $validated = $request->validate([
+            'disaster_id' => ['required', 'exists:disasters,id'],
+            'submission_type' => ['required', 'in:incident_report,damage_assessment,resource_need,population_data,other'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:5000'],
+        ]);
+
+        DB::table('volunteer_disaster_submissions')->insert([
+            'person_id' => $personId,
+            'disaster_id' => $validated['disaster_id'],
+            'submission_type' => $validated['submission_type'],
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()
+            ->route('volunteer.disaster-submissions')
+            ->with('success', 'Your disaster report has been submitted for review.');
+    }
+
+    public function showDisasterSubmissions(Request $request)
+    {
+        $personId = $this->volunteerPersonId();
+
+        $filter = $request->query('status', 'all');
+        $allowedFilters = ['all', 'pending', 'approved', 'rejected'];
+
+        if (!in_array($filter, $allowedFilters, true)) {
+            $filter = 'all';
+        }
+
+        $query = DB::table('volunteer_disaster_submissions as vds')
+            ->join('people as p', 'vds.person_id', '=', 'p.id')
+            ->join('disasters as d', 'vds.disaster_id', '=', 'd.id')
+            ->where('vds.person_id', $personId)
+            ->orderByDesc('vds.created_at');
+
+        if ($filter !== 'all') {
+            $query->where('vds.status', $filter);
+        }
+
+        $submissions = $query->select('vds.*')->get();
+
+        // Load disasters relationship and convert timestamps for each submission
+        $submissions = $submissions->map(function ($submission) {
+            $submission->disaster = DB::table('disasters')
+                ->leftJoin('locations as l', 'disasters.location_id', '=', 'l.id')
+                ->where('disasters.id', $submission->disaster_id)
+                ->select('disasters.*', 'l.city', 'l.district')
+                ->first();
+            
+            // Convert timestamps to Carbon objects
+            $submission->created_at = \Carbon\Carbon::parse($submission->created_at);
+            $submission->updated_at = \Carbon\Carbon::parse($submission->updated_at);
+            
+            return $submission;
+        });
+
+        return view('volunteer ui.disaster-submissions', [
+            'activePage' => 'disaster-submissions',
+            'filter' => $filter,
+            'submissions' => $submissions,
+        ]);
+    }
+
+    public function showDisasterSubmissionDetail(int $submissionId)
+    {
+        $personId = $this->volunteerPersonId();
+
+        $submission = DB::table('volunteer_disaster_submissions')
+            ->where('id', $submissionId)
+            ->where('person_id', $personId)
+            ->first();
+
+        abort_if(!$submission, 404);
+
+        $submission->disaster = DB::table('disasters')
+            ->leftJoin('locations as l', 'disasters.location_id', '=', 'l.id')
+            ->where('disasters.id', $submission->disaster_id)
+            ->select('disasters.*', 'l.city', 'l.district')
+            ->first();
+
+        // Convert timestamps to Carbon objects
+        $submission->created_at = \Carbon\Carbon::parse($submission->created_at);
+        $submission->updated_at = \Carbon\Carbon::parse($submission->updated_at);
+
+        return view('volunteer ui.disaster-submission-detail', [
+            'activePage' => 'disaster-submissions',
+            'submission' => $submission,
         ]);
     }
 }

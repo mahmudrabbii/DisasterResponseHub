@@ -76,13 +76,22 @@ Route::post('/admin/aid-requests', [App\Http\Controllers\AdminController::class,
 Route::patch('/admin/aid-requests/{requestId}', [App\Http\Controllers\AdminController::class, 'updateAidRequest'])->name('admin.aid-requests.update');
 Route::delete('/admin/aid-requests/{requestId}', [App\Http\Controllers\AdminController::class, 'destroyAidRequest'])->name('admin.aid-requests.destroy');
 
+Route::get('/admin/disaster-submissions', [App\Http\Controllers\AdminController::class, 'disasterSubmissions'])->name('admin.disaster-submissions');
+Route::get('/admin/disaster-submissions/{submissionId}', [App\Http\Controllers\AdminController::class, 'showDisasterSubmissionReview'])->name('admin.disaster-submissions.show');
+Route::patch('/admin/disaster-submissions/{submissionId}', [App\Http\Controllers\AdminController::class, 'updateDisasterSubmission'])->name('admin.disaster-submissions.update');
+
 Route::get('/volunteer/dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');
 Route::get('/volunteer/assigned-tasks', [VolunteerController::class, 'tasks'])->name('volunteer.tasks');
 Route::patch('/volunteer/assigned-tasks/{assignmentId}', [VolunteerController::class, 'updateTaskHours'])->name('volunteer.tasks.update-hours');
+Route::post('/volunteer/assigned-tasks/{assignmentId}/accept', [VolunteerController::class, 'acceptTask'])->name('volunteer.tasks.accept');
 Route::get('/volunteer/profile', [VolunteerController::class, 'profile'])->name('volunteer.profile');
 Route::patch('/volunteer/profile', [VolunteerController::class, 'updateProfile'])->name('volunteer.profile.update');
 Route::get('/volunteer/aid-request', [VolunteerController::class, 'aidRequests'])->name('volunteer.aid-requests');
 Route::post('/volunteer/aid-request', [VolunteerController::class, 'storeAidRequest'])->name('volunteer.aid-requests.store');
 Route::get('/volunteer/disaster-data', [VolunteerController::class, 'disasterData'])->name('volunteer.disaster-data');
+Route::get('/volunteer/disaster-submissions', [VolunteerController::class, 'showDisasterSubmissions'])->name('volunteer.disaster-submissions');
+Route::get('/volunteer/disaster-submissions/create', [VolunteerController::class, 'showCreateSubmissionForm'])->name('volunteer.disaster-submissions.create');
+Route::post('/volunteer/disaster-submissions', [VolunteerController::class, 'storeDisasterSubmission'])->name('volunteer.disaster-submissions.store');
+Route::get('/volunteer/disaster-submissions/{submissionId}', [VolunteerController::class, 'showDisasterSubmissionDetail'])->name('volunteer.disaster-submissions.show');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
