@@ -33,6 +33,8 @@ class AuthController extends Controller
     {
         if ($user->role === 'admin') {
             $targetRoute = 'admin.dashboard';
+        } elseif ($user->role === 'official') {
+            $targetRoute = 'official.dashboard';
         } elseif ($user->role === 'volunteer') {
             $targetRoute = 'volunteer.dashboard';
         } else {

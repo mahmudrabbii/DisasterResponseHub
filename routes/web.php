@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\VolunteerController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,10 @@ Route::get('/dashboard', function () {
 
     if (auth()->user()->role === 'admin') {
         return redirect()->route('admin.dashboard');
+    }
+
+    if (auth()->user()->role === 'official') {
+        return redirect()->route('official.dashboard');
     }
 
     if (auth()->user()->role === 'volunteer') {
@@ -79,6 +84,22 @@ Route::delete('/admin/aid-requests/{requestId}', [App\Http\Controllers\AdminCont
 Route::get('/admin/disaster-submissions', [App\Http\Controllers\AdminController::class, 'disasterSubmissions'])->name('admin.disaster-submissions');
 Route::get('/admin/disaster-submissions/{submissionId}', [App\Http\Controllers\AdminController::class, 'showDisasterSubmissionReview'])->name('admin.disaster-submissions.show');
 Route::patch('/admin/disaster-submissions/{submissionId}', [App\Http\Controllers\AdminController::class, 'updateDisasterSubmission'])->name('admin.disaster-submissions.update');
+
+Route::get('/official/dashboard', [OfficialController::class, 'dashboard'])->name('official.dashboard');
+Route::get('/official/disasters', [OfficialController::class, 'disasters'])->name('official.disasters');
+Route::get('/official/volunteers', [OfficialController::class, 'volunteers'])->name('official.volunteers');
+Route::get('/official/resources', [OfficialController::class, 'resources'])->name('official.resources');
+Route::get('/official/community-supports', [OfficialController::class, 'communitySupports'])->name('official.community-supports');
+Route::get('/official/policies', [OfficialController::class, 'policies'])->name('official.policies');
+Route::patch('/official/disasters/{disasterId}/status', [OfficialController::class, 'updateDisasterStatus'])->name('official.disasters.update-status');
+Route::post('/official/volunteer-assignments', [OfficialController::class, 'storeVolunteerAssignment'])->name('official.volunteer-assignments.store');
+Route::patch('/official/volunteer-assignments/{assignmentId}', [OfficialController::class, 'updateVolunteerAssignment'])->name('official.volunteer-assignments.update');
+Route::post('/official/resource-requests', [OfficialController::class, 'storeResourceRequest'])->name('official.resource-requests.store');
+Route::patch('/official/resource-requests/{requestId}', [OfficialController::class, 'updateResourceRequest'])->name('official.resource-requests.update');
+Route::post('/official/resource-usage', [OfficialController::class, 'storeResourceUsage'])->name('official.resource-usage.store');
+Route::post('/official/community-supports', [OfficialController::class, 'storeCommunitySupport'])->name('official.community-supports.store');
+Route::patch('/official/community-supports/{beneficiaryId}', [OfficialController::class, 'updateCommunitySupport'])->name('official.community-supports.update');
+Route::post('/official/policies', [OfficialController::class, 'storePolicy'])->name('official.policies.store');
 
 Route::get('/volunteer/dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');
 Route::get('/volunteer/assigned-tasks', [VolunteerController::class, 'tasks'])->name('volunteer.tasks');

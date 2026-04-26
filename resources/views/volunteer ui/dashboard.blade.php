@@ -122,4 +122,22 @@
             </table>
         </div>
     </section>
+
+    <section class="panel-card full-width">
+        <div class="panel-header">
+            <h3>Official policy updates</h3>
+            <span class="muted">Latest coordination guidance from NGO officials</span>
+        </div>
+
+        @forelse ($policies as $policy)
+            <div class="list-row">
+                <div>
+                    <strong>{{ $policy->title }}</strong>
+                    <p>{{ $policy->description }}</p>
+                </div>
+            </div>
+        @empty
+            <p class="empty-state">No policy updates available yet.</p>
+        @endforelse
+    </section>
 @endsection

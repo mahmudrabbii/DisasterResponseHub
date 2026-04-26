@@ -77,7 +77,9 @@
                     <select id="disaster_id" name="disaster_id" required>
                         <option value="">Select disaster</option>
                         @foreach ($disasters as $disaster)
-                            <option value="{{ $disaster->id }}">{{ $disaster->type }}</option>
+                            <option value="{{ $disaster->id }}">
+                                {{ $disaster->type }} - {{ !empty($disaster->disaster_date) ? \Illuminate\Support\Carbon::parse($disaster->disaster_date)->format('M d, Y') : 'No date' }}
+                            </option>
                         @endforeach
                     </select>
                 </div>

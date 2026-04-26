@@ -103,10 +103,22 @@ class AdminController extends Controller
             ->limit(5)
             ->get();
 
+        $alerts = DB::table('alerts')
+            ->orderByDesc('created_at')
+            ->limit(6)
+            ->get();
+
+        $policies = DB::table('policies')
+            ->orderByDesc('created_at')
+            ->limit(6)
+            ->get();
+
         return view('admin.dashboard', array_merge($this->adminLayoutData('dashboard'), [
             'recentUsers' => $users,
             'recentDisasters' => $disasters,
             'recentResources' => $resources,
+            'alerts' => $alerts,
+            'policies' => $policies,
             'weather' => $this->dashboardWeather(),
             'weatherQuery' => $this->dashboardWeatherQuery(),
         ]));
@@ -644,20 +656,28 @@ class AdminController extends Controller
     {
         $aidRequests = DB::table('aid_requests as ar')
             ->leftJoin('people as p', 'ar.person_id', '=', 'p.id')
-            ->leftJoin('aid_types as at', 'ar.aid_type_id', '=', 'at.id')
             ->leftJoin('locations as l', 'ar.location_id', '=', 'l.id')
             ->orderByDesc('ar.created_at')
             ->select(
                 'ar.id',
+                'ar.aid_type_id',
                 'ar.description',
                 'ar.status',
                 'ar.created_at',
                 'p.name as person_name',
-                'at.name as aid_type',
                 'l.city',
                 'l.district'
             )
-            ->get();
+            ->get()
+            ->map(function ($request) {
+                $aidTypeIds = array_filter(array_map('intval', explode(',', $request->aid_type_id)));
+                $aidTypes = DB::table('aid_types')
+                    ->whereIn('id', $aidTypeIds)
+                    ->pluck('name')
+                    ->implode(', ');
+                $request->aid_type = $aidTypes ?: 'N/A';
+                return $request;
+            });
 
         $people = DB::table('people')->orderBy('name')->get();
         $aidTypes = DB::table('aid_types')->orderBy('name')->get();

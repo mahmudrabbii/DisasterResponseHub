@@ -162,6 +162,44 @@
         </div>
     </section>
 
+    <section class="panel-grid">
+        <article class="panel-card">
+            <div class="panel-header">
+                <h3>Policy broadcasts</h3>
+                <span class="muted">Published by NGO officials</span>
+            </div>
+
+            @forelse ($policies as $policy)
+                <div class="list-row">
+                    <div>
+                        <strong>{{ $policy->title }}</strong>
+                        <p>{{ $policy->description }}</p>
+                    </div>
+                </div>
+            @empty
+                <p class="empty-state">No policies have been published yet.</p>
+            @endforelse
+        </article>
+
+        <article class="panel-card">
+            <div class="panel-header">
+                <h3>Recent alerts</h3>
+                <span class="muted">Latest system-wide notifications</span>
+            </div>
+
+            @forelse ($alerts as $alert)
+                <div class="list-row">
+                    <div>
+                        <strong>{{ $alert->title }}</strong>
+                        <p>{{ $alert->message }}</p>
+                    </div>
+                </div>
+            @empty
+                <p class="empty-state">No alerts available.</p>
+            @endforelse
+        </article>
+    </section>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var form = document.querySelector('[data-weather-form]');

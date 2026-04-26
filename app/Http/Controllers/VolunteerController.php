@@ -26,9 +26,9 @@ class VolunteerController extends Controller
     {
         $user = $this->volunteerUser();
 
-        abort_unless($user->person, 404);
+        abort_unless(!empty($user->person_id), 404);
 
-        return (int) $user->person->id;
+        return (int) $user->person_id;
     }
 
     private function volunteerRecord(int $personId)
@@ -135,6 +135,11 @@ class VolunteerController extends Controller
             ->limit(10)
             ->get();
 
+        $policies = DB::table('policies')
+            ->orderByDesc('created_at')
+            ->limit(6)
+            ->get();
+
         $stats = [
             'assigned_tasks' => $tasks->count(),
             'unique_disasters' => $tasks->pluck('disaster_id')->unique()->count(),
@@ -155,6 +160,7 @@ class VolunteerController extends Controller
             'aidTypes',
             'locations',
             'alerts',
+            'policies',
             'stats'
         );
     }
@@ -282,35 +288,105 @@ class VolunteerController extends Controller
     public function aidRequests()
     {
         $personId = $this->volunteerPersonId();
+        $dashboardData = $this->dashboardData($personId);
 
-        return view('volunteer ui.aid-request', array_merge([
+        $assignedDisasters = DB::table('volunteer_assignments as va')
+            ->join('disasters as d', 'va.disaster_id', '=', 'd.id')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->where('va.person_id', $personId)
+            ->orderByDesc('va.assigned_date')
+            ->select('d.id', 'd.type', 'd.disaster_date', 'd.status', 'l.city', 'l.district')
+            ->distinct()
+            ->get();
+
+        $myAidRequests = DB::table('aid_requests as ar')
+            ->leftJoin('locations as l', 'ar.location_id', '=', 'l.id')
+            ->where('ar.person_id', $personId)
+            ->orderByDesc('ar.created_at')
+            ->select(
+                'ar.id',
+                'ar.person_id',
+                'ar.aid_type_id',
+                'ar.description',
+                'ar.status',
+                'ar.created_at',
+                'l.city',
+                'l.district'
+            )
+            ->get()
+            ->map(function ($request) {
+                $aidTypeIds = array_filter(array_map('intval', explode(',', $request->aid_type_id)));
+                $aidTypes = DB::table('aid_types')
+                    ->whereIn('id', $aidTypeIds)
+                    ->pluck('name')
+                    ->implode(', ');
+                $request->aid_type = $aidTypes ?: 'N/A';
+                return $request;
+            });
+
+        return view('volunteer ui.aid-request', array_merge($dashboardData, [
             'activePage' => 'aid-request',
-        ], $this->dashboardData($personId)));
+            'assignedDisasters' => $assignedDisasters,
+            'aidRequests' => $myAidRequests,
+            'myAidRequests' => $myAidRequests,
+        ]));
     }
+
 
     public function storeAidRequest(Request $request)
     {
         $personId = $this->volunteerPersonId();
 
         $validated = $request->validate([
-            'location_id' => ['required', 'exists:locations,id'],
-            'aid_type_id' => ['required', 'exists:aid_types,id'],
+            'disaster_id' => [
+                'required',
+                Rule::exists('volunteer_assignments', 'disaster_id')->where(function ($query) use ($personId) {
+                    $query->where('person_id', $personId);
+                }),
+            ],
+            'aid_type_ids' => ['required', 'array', 'min:1'],
+            'aid_type_ids.*' => ['required', 'distinct', 'exists:aid_types,id'],
             'description' => ['required', 'string', 'max:2000'],
         ]);
 
-        DB::table('aid_requests')->insert([
-            'person_id' => $personId,
-            'location_id' => $validated['location_id'],
-            'aid_type_id' => $validated['aid_type_id'],
-            'description' => $validated['description'],
-            'status' => 'pending',
-            'created_at' => now(),
-        ]);
+        $disaster = DB::table('disasters')
+            ->where('id', $validated['disaster_id'])
+            ->select('location_id')
+            ->first();
+
+        if (!$disaster || !$disaster->location_id) {
+            return redirect()
+                ->route('volunteer.aid-requests')
+                ->withErrors(['disaster_id' => 'Selected disaster has no valid location assigned.'])
+                ->withInput();
+        }
+
+        DB::transaction(function () use ($personId, $disaster, $validated) {
+            $aidTypeIds = implode(',', $validated['aid_type_ids']);
+
+            DB::table('aid_requests')->insert([
+                'person_id' => $personId,
+                'location_id' => $disaster->location_id,
+                'aid_type_id' => $aidTypeIds,
+                'description' => $validated['description'],
+                'status' => 'pending',
+                'created_at' => now(),
+            ]);
+        });
 
         return redirect()
             ->route('volunteer.aid-requests')
-            ->with('status', 'Aid request submitted.');
+            ->with('status', 'Aid request submitted successfully.');
     }
+            
+
+
+   
+
+
+
+
+
 
     public function disasterData(Request $request)
     {

@@ -101,6 +101,8 @@ CREATE TABLE beneficiaries (
     location_id INT,
     disaster_id INT,
     aid_received VARCHAR(255),
+    support_status ENUM('pending','approved','rejected') DEFAULT 'pending',
+    support_notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (person_id) REFERENCES people(id),
     FOREIGN KEY (location_id) REFERENCES locations(id),
@@ -121,13 +123,12 @@ CREATE TABLE aid_requests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     person_id INT,
     location_id INT,
-    aid_type_id INT,
+    aid_type_id VARCHAR(255),
     description TEXT,
     status ENUM('pending','approved','rejected','completed') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (person_id) REFERENCES people(id),
-    FOREIGN KEY (location_id) REFERENCES locations(id),
-    FOREIGN KEY (aid_type_id) REFERENCES aid_types(id)
+    FOREIGN KEY (location_id) REFERENCES locations(id)
 );
 
 CREATE TABLE sos_requests (
@@ -139,6 +140,35 @@ CREATE TABLE sos_requests (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (person_id) REFERENCES people(id),
     FOREIGN KEY (location_id) REFERENCES locations(id)
+);
+
+CREATE TABLE resource_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    disaster_id INT NOT NULL,
+    requested_by_person_id INT NOT NULL,
+    resource_name VARCHAR(100) NOT NULL,
+    quantity_requested INT UNSIGNED NOT NULL,
+    notes TEXT,
+    status ENUM('pending','approved','fulfilled','rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (disaster_id) REFERENCES disasters(id) ON DELETE CASCADE,
+    FOREIGN KEY (requested_by_person_id) REFERENCES people(id) ON DELETE CASCADE
+);
+
+CREATE TABLE resource_usage_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    disaster_id INT NOT NULL,
+    resource_id INT NULL,
+    resource_name VARCHAR(100) NOT NULL,
+    quantity_used INT UNSIGNED NOT NULL,
+    notes TEXT,
+    recorded_by_person_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (disaster_id) REFERENCES disasters(id) ON DELETE CASCADE,
+    FOREIGN KEY (resource_id) REFERENCES resources(id) ON DELETE SET NULL,
+    FOREIGN KEY (recorded_by_person_id) REFERENCES people(id) ON DELETE CASCADE
 );
 
 CREATE TABLE policies (
@@ -238,6 +268,7 @@ INSERT INTO fundraising (person_id, disaster_id, title, amount, role, status) VA
 INSERT INTO aid_types (name) VALUES
 ('Food Package'),
 ('Medical Kit'),
+('Rescue Kit'),
 ('Water Supply');
 
 INSERT INTO resources (name, category, quantity, expiry_date) VALUES
@@ -255,6 +286,12 @@ INSERT INTO aid_requests (person_id, location_id, aid_type_id, description, stat
 
 INSERT INTO sos_requests (person_id, location_id, message, status) VALUES
 (2, 2, 'Need rescue immediately', 'pending');
+
+INSERT INTO resource_requests (disaster_id, requested_by_person_id, resource_name, quantity_requested, notes, status) VALUES
+(1, 3, 'Food Packages', 250, 'Urgent request for flood relief', 'pending');
+
+INSERT INTO resource_usage_logs (disaster_id, resource_id, resource_name, quantity_used, notes, recorded_by_person_id) VALUES
+(1, 1, 'Rice Bags', 25, 'Delivered to flood shelter', 3);
 
 INSERT INTO policies (title, description) VALUES
 ('Flood Response Policy', 'Guidelines for handling flood emergencies');

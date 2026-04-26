@@ -1,0 +1,50 @@
+@extends('official.layout')
+
+@section('title', 'Disaster Handling - DisasterResponseHub')
+@section('page-title', 'Disaster Handling')
+@section('page-subtitle', 'View approved disasters and update their response status.')
+
+@section('content')
+    <section class="panel-card full-width">
+        <div class="panel-header">
+            <h3>Approved disasters</h3>
+            <span class="muted">Disaster operations only</span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Disaster</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                @forelse ($approvedDisasters as $disaster)
+                    <tr>
+                        <td><strong>{{ $disaster->type }}</strong><div class="muted">{{ $disaster->disaster_date }}</div></td>
+                        <td>{{ $disaster->city ?? 'Unknown' }}, {{ $disaster->district ?? 'Unknown' }}</td>
+                        <td><span class="status-pill status-{{ $disaster->status }}">{{ $disaster->status }}</span></td>
+                        <td>
+                            <form method="POST" action="{{ route('official.disasters.update-status', $disaster->id) }}" class="inline-form">
+                                @csrf
+                                @method('PATCH')
+                                <select name="status">
+                                    <option value="pending" @selected('pending')>Pending</option>
+                                    <option value="in_progress" @selected('in_progress')>In progress</option>
+                                    <option value="resolved" @selected('resolved')>Resolved</option>
+                                </select>
+                                <button type="submit" class="primary-action">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="empty-state">No approved disasters are available yet.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
+@endsection
