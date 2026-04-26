@@ -7,7 +7,7 @@
 @section('content')
     <div class="review-header">
         <div>
-            <a href="{{ route('admin.disaster-submissions') }}" class="back-link">← Back to Reports</a>
+            <a href="{{ route('admin.disaster-submissions') }}" class="back-link"> ← Back to Reports</a>
             <h2>{{ $submission->title }}</h2>
             <p class="submission-by">Submitted by <strong>{{ $submission->person->name }}</strong> on {{ $submission->created_at->format('M d, Y') }}</p>
         </div>

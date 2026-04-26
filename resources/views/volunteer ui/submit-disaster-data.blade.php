@@ -32,7 +32,7 @@
             <div class="form-group">
                 <label for="submission_type" class="form-label">Report Type *</label>
                 <select id="submission_type" name="submission_type" class="form-input" required>
-                    <option value="">-- Choose report type --</option>
+                    <option value="">Choose report type</option>
                     <option value="incident_report" {{ old('submission_type') == 'incident_report' ? 'selected' : '' }}>Incident Report</option>
                     <option value="damage_assessment" {{ old('submission_type') == 'damage_assessment' ? 'selected' : '' }}>Damage Assessment</option>
                     <option value="resource_need" {{ old('submission_type') == 'resource_need' ? 'selected' : '' }}>Resource Need</option>
