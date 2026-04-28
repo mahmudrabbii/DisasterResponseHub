@@ -1,0 +1,443 @@
+/* Public User Layout Styles */
+
+/* Guest login/register section */
+.sidebar-card .guest-auth {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.sidebar-card .guest-auth a {
+    padding: 8px 12px;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.sidebar-card .guest-auth a:hover {
+    background: #1039a6;
+}
+
+/* Public Home Page */
+.public-hero {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.public-hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: var(--text);
+}
+
+.public-hero p {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+.action-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.action-card-link {
+    text-decoration: none;
+}
+
+.action-card {
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.action-card:hover {
+    transform: translateY(-4px);
+}
+
+.action-card h3 {
+    margin-top: 0;
+    color: var(--accent);
+}
+
+.action-card p {
+    color: var(--muted);
+}
+
+/* Content sections */
+.section-description {
+    padding: 22px;
+}
+
+.description-text {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.image-container {
+    padding: 22px;
+    text-align: center;
+}
+
+.image-container img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form elements */
+.form-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Pagination and controls */
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Empty states */
+.empty-state-container {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+/* Status pills in tables */
+.status-pill-with-spacing {
+    margin-right: 5px;
+}
+
+/* Inline form for quick actions */
+.inline-form {
+    display: inline;
+}
+
+.inline-form select {
+    cursor: pointer;
+}
+
+.status-select {
+    padding: 6px 10px;
+    border: 1px solid var(--muted);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.status-select:hover {
+    border-color: var(--accent);
+    background-color: rgba(15, 118, 110, 0.05);
+}
+
+/* Aid type tags */
+.aid-type-tag {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/* Form card */
+.form-card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Checkbox grid */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-item label {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* File help text */
+.file-help {
+    color: #666;
+    display: block;
+    margin-top: 5px;
+}
+
+/* Recent disasters section */
+.recent-disasters-section {
+    margin-top: 30px;
+}
+
+/* Link styling */
+.link-primary {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.link-primary:hover {
+    text-decoration: underline;
+}
+
+/* ========== DONATION PAGE STYLES ========== */
+
+/* Page Title Section */
+.page-title-section {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+}
+
+.page-title-section h1 {
+    font-size: 2.2rem;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+.page-title-section p {
+    font-size: 1rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+/* Donation Statistics */
+.donation-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--accent), #0d5f5d);
+    color: white;
+    padding: 25px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    opacity: 0.95;
+}
+
+/* Campaigns Grid */
+.campaigns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 0;
+}
+
+.campaign-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.campaign-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-color: var(--accent);
+}
+
+.campaign-card h4 {
+    margin: 0 0 12px 0;
+    color: var(--text);
+    font-size: 1.1rem;
+}
+
+.campaign-description {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 12px 0;
+    line-height: 1.5;
+}
+
+/* Progress Bar */
+.progress-section {
+    margin: 16px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e5e5;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #0d5f5d);
+    transition: width 0.3s ease;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.current-amount {
+    color: var(--text);
+    font-weight: bold;
+}
+
+.target-amount {
+    color: var(--muted);
+}
+
+/* Campaign Footer */
+.campaign-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.donors-count {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.donate-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.donate-btn:hover {
+    background: #0d5f5d;
+}
+
+/* Donation CTA */
+.donation-cta {
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.1), rgba(15, 118, 110, 0.05));
+    border: 2px solid var(--accent);
+    margin: 30px 0;
+}
+
+.cta-content {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.cta-content h3 {
+    color: var(--text);
+    margin: 0 0 12px 0;
+    font-size: 1.5rem;
+}
+
+.cta-content p {
+    color: var(--muted);
+    margin: 0 0 20px 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.large-btn {
+    padding: 12px 32px !important;
+    font-size: 1rem !important;
+}
+
+/* Donations Timeline */
+.donations-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.donation-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    border-left: 4px solid var(--accent);
+}
+
+.donation-avatar {
+    flex-shrink: 0;
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.donation-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.donation-donor {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    margin-bottom: 0;
+}
+
+.donation-donor strong {
+    color: var(--text);
+}
+
+.donation-time {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.donation-amount {
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.donation-amount strong {
+    color: var(--accent);
+    font-size: 1.1rem;
+}

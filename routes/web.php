@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\VolunteerController;
+use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,17 +17,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('dashboard')
-        : redirect()->route('login');
+Route::get('/', [PublicController::class, 'index'])->name('public.home');
+Route::get('/report-disaster', [PublicController::class, 'reportDisaster'])->name('public.report-disaster');
+Route::post('/report-disaster', [PublicController::class, 'storeDisasterReport'])->name('public.report-disaster.store');
+Route::get('/request-help', [PublicController::class, 'requestHelp'])->name('public.request-help');
+Route::post('/request-help', [PublicController::class, 'storeHelpRequest'])->name('public.request-help.store');
+Route::get('/alerts', [PublicController::class, 'viewAlerts'])->name('public.alerts');
+Route::get('/disasters', [PublicController::class, 'viewDisasters'])->name('public.disasters');
+Route::get('/donate', [PublicController::class, 'donate'])->name('public.donate');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 });
-
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 
 Route::get('/dashboard', function () {
     if (!auth()->check()) {
@@ -85,12 +90,23 @@ Route::get('/admin/disaster-submissions', [App\Http\Controllers\AdminController:
 Route::get('/admin/disaster-submissions/{submissionId}', [App\Http\Controllers\AdminController::class, 'showDisasterSubmissionReview'])->name('admin.disaster-submissions.show');
 Route::patch('/admin/disaster-submissions/{submissionId}', [App\Http\Controllers\AdminController::class, 'updateDisasterSubmission'])->name('admin.disaster-submissions.update');
 
+Route::get('/admin/public-disaster-reports', [App\Http\Controllers\AdminController::class, 'publicDisasterReports'])->name('admin.public-disaster-reports');
+Route::get('/admin/public-disaster-reports/{reportId}', [App\Http\Controllers\AdminController::class, 'reviewDisasterReport'])->name('admin.public-disaster-reports.show');
+Route::patch('/admin/public-disaster-reports/{reportId}', [App\Http\Controllers\AdminController::class, 'updateDisasterReportStatus'])->name('admin.public-disaster-reports.update');
+
+Route::get('/admin/public-help-requests', [App\Http\Controllers\AdminController::class, 'publicHelpRequests'])->name('admin.public-help-requests');
+Route::get('/admin/public-help-requests/{requestId}', [App\Http\Controllers\AdminController::class, 'reviewHelpRequest'])->name('admin.public-help-requests.show');
+Route::patch('/admin/public-help-requests/{requestId}', [App\Http\Controllers\AdminController::class, 'updateHelpRequestStatus'])->name('admin.public-help-requests.update');
+
 Route::get('/official/dashboard', [OfficialController::class, 'dashboard'])->name('official.dashboard');
 Route::get('/official/disasters', [OfficialController::class, 'disasters'])->name('official.disasters');
 Route::get('/official/volunteers', [OfficialController::class, 'volunteers'])->name('official.volunteers');
 Route::get('/official/resources', [OfficialController::class, 'resources'])->name('official.resources');
 Route::get('/official/community-supports', [OfficialController::class, 'communitySupports'])->name('official.community-supports');
 Route::get('/official/policies', [OfficialController::class, 'policies'])->name('official.policies');
+Route::get('/official/volunteer-submissions', [OfficialController::class, 'volunteerSubmissions'])->name('official.volunteer-submissions');
+Route::get('/official/volunteer-submissions/{submissionId}', [OfficialController::class, 'showVolunteerSubmission'])->name('official.volunteer-submissions.show');
+Route::patch('/official/volunteer-submissions/{submissionId}', [OfficialController::class, 'updateVolunteerSubmission'])->name('official.volunteer-submissions.update');
 Route::patch('/official/disasters/{disasterId}/status', [OfficialController::class, 'updateDisasterStatus'])->name('official.disasters.update-status');
 Route::post('/official/volunteer-assignments', [OfficialController::class, 'storeVolunteerAssignment'])->name('official.volunteer-assignments.store');
 Route::patch('/official/volunteer-assignments/{assignmentId}', [OfficialController::class, 'updateVolunteerAssignment'])->name('official.volunteer-assignments.update');
@@ -100,6 +116,11 @@ Route::post('/official/resource-usage', [OfficialController::class, 'storeResour
 Route::post('/official/community-supports', [OfficialController::class, 'storeCommunitySupport'])->name('official.community-supports.store');
 Route::patch('/official/community-supports/{beneficiaryId}', [OfficialController::class, 'updateCommunitySupport'])->name('official.community-supports.update');
 Route::post('/official/policies', [OfficialController::class, 'storePolicy'])->name('official.policies.store');
+
+Route::get('/official/public-disaster-reports', [OfficialController::class, 'publicDisasterReports'])->name('official.public-disaster-reports');
+Route::get('/official/public-disaster-reports/{reportId}', [OfficialController::class, 'reviewDisasterReport'])->name('official.public-disaster-reports.show');
+Route::get('/official/public-help-requests', [OfficialController::class, 'publicHelpRequests'])->name('official.public-help-requests');
+Route::patch('/official/public-help-requests/{requestId}', [OfficialController::class, 'approveHelpRequest'])->name('official.public-help-requests.update');
 
 Route::get('/volunteer/dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');
 Route::get('/volunteer/assigned-tasks', [VolunteerController::class, 'tasks'])->name('volunteer.tasks');
@@ -115,4 +136,6 @@ Route::get('/volunteer/disaster-submissions/create', [VolunteerController::class
 Route::post('/volunteer/disaster-submissions', [VolunteerController::class, 'storeDisasterSubmission'])->name('volunteer.disaster-submissions.store');
 Route::get('/volunteer/disaster-submissions/{submissionId}', [VolunteerController::class, 'showDisasterSubmissionDetail'])->name('volunteer.disaster-submissions.show');
 
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});

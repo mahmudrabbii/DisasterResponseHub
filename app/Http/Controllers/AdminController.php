@@ -855,4 +855,168 @@ class AdminController extends Controller
             ->route('admin.disaster-submissions')
             ->with('success', 'Submission reviewed and updated successfully.');
     }
+
+    public function publicDisasterReports()
+    {
+        $this->adminUser();
+
+        $reports = DB::table('incidents as i')
+            ->join('disasters as d', 'i.disaster_id', '=', 'd.id')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->orderByDesc('i.created_at')
+            ->select(
+                'i.id',
+                'i.title',
+                'i.description',
+                'i.severity',
+                'i.status',
+                'i.created_at',
+                'd.type as disaster_type',
+                'l.city',
+                'l.district'
+            )
+            ->paginate(20);
+
+        return view('admin.public-disaster-reports', [
+            'reports' => $reports,
+            'activePage' => 'public-disaster-reports',
+        ]);
+    }
+
+    public function reviewDisasterReport($reportId)
+    {
+        $this->adminUser();
+
+        $report = DB::table('incidents as i')
+            ->join('disasters as d', 'i.disaster_id', '=', 'd.id')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->where('i.id', $reportId)
+            ->select(
+                'i.id',
+                'i.title',
+                'i.description',
+                'i.severity',
+                'i.status',
+                'i.image_path',
+                'i.created_at',
+                'd.id as disaster_id',
+                'd.type as disaster_type',
+                'l.city',
+                'l.district'
+            )
+            ->first();
+
+        abort_if(!$report, 404);
+
+        return view('admin.disaster-report-detail', [
+            'report' => $report,
+            'activePage' => 'public-disaster-reports',
+        ]);
+    }
+
+    public function updateDisasterReportStatus(Request $request, $reportId)
+    {
+        $this->adminUser();
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:reported,in_progress,resolved'],
+        ]);
+
+        DB::table('incidents')
+            ->where('id', $reportId)
+            ->update([
+                'status' => $validated['status'],
+                'updated_at' => now(),
+            ]);
+
+        return redirect()
+            ->route('admin.public-disaster-reports')
+            ->with('success', 'Report status updated successfully.');
+    }
+
+    public function publicHelpRequests()
+    {
+        $this->adminUser();
+
+        $requests = DB::table('aid_requests as ar')
+            ->join('people as p', 'ar.person_id', '=', 'p.id')
+            ->leftJoin('locations as l', 'ar.location_id', '=', 'l.id')
+            ->orderByDesc('ar.created_at')
+            ->select(
+                'ar.id',
+                'ar.aid_type_id',
+                'ar.description',
+                'ar.status',
+                'ar.created_at',
+                'p.name',
+                'p.email',
+                'p.phone',
+                'l.city',
+                'l.district'
+            )
+            ->paginate(20);
+
+        return view('admin.public-help-requests', [
+            'requests' => $requests,
+            'activePage' => 'public-help-requests',
+        ]);
+    }
+
+    public function reviewHelpRequest($requestId)
+    {
+        $this->adminUser();
+
+        $request_data = DB::table('aid_requests as ar')
+            ->join('people as p', 'ar.person_id', '=', 'p.id')
+            ->leftJoin('locations as l', 'ar.location_id', '=', 'l.id')
+            ->where('ar.id', $requestId)
+            ->select(
+                'ar.id',
+                'ar.aid_type_id',
+                'ar.description',
+                'ar.status',
+                'ar.created_at',
+                'p.name',
+                'p.email',
+                'p.phone',
+                'l.city',
+                'l.district'
+            )
+            ->first();
+
+        abort_if(!$request_data, 404);
+
+        // Get aid type names
+        $aidTypeIds = explode(',', $request_data->aid_type_id);
+        $aidTypes = DB::table('aid_types')
+            ->whereIn('id', $aidTypeIds)
+            ->pluck('name')
+            ->toArray();
+
+        return view('admin.help-request-detail', [
+            'request_data' => $request_data,
+            'aidTypes' => $aidTypes,
+            'activePage' => 'public-help-requests',
+        ]);
+    }
+
+    public function updateHelpRequestStatus(Request $request, $requestId)
+    {
+        $this->adminUser();
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:pending,approved,rejected,completed'],
+        ]);
+
+        DB::table('aid_requests')
+            ->where('id', $requestId)
+            ->update([
+                'status' => $validated['status'],
+                'updated_at' => now(),
+            ]);
+
+        return redirect()
+            ->route('admin.public-help-requests')
+            ->with('success', 'Help request status updated successfully.');
+    }
 }

@@ -47,6 +47,7 @@
             <label for="role">Select User Type</label>
             <select id="role" name="role" required>
                 <option value="">Select User Type</option>
+                <option value="public" {{ old('role') === 'public' ? 'selected' : '' }}>Public User</option>
                 <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="official" {{ old('role') === 'official' ? 'selected' : '' }}>NGO Official</option>
                 <option value="volunteer" {{ old('role') === 'volunteer' ? 'selected' : '' }}>Volunteer</option>

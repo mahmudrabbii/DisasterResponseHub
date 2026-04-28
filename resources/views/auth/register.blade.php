@@ -46,6 +46,7 @@
             <label for="role">Select Role</label>
             <select id="role" name="role" required>
                 <option value="">Select Role</option>
+                <option value="public" {{ old('role') === 'public' ? 'selected' : '' }}>Public User</option>
                 <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="official" {{ old('role') === 'official' ? 'selected' : '' }}>NGO Official</option>
                 <option value="volunteer" {{ old('role') === 'volunteer' ? 'selected' : '' }}>Volunteer</option>

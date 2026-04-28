@@ -17,6 +17,8 @@
                 <tr>
                     <th>Disaster</th>
                     <th>Location</th>
+                    <th>Affected</th>
+                    <th>Date</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -24,8 +26,13 @@
                 <tbody>
                 @forelse ($approvedDisasters as $disaster)
                     <tr>
-                        <td><strong>{{ $disaster->type }}</strong><div class="muted">{{ $disaster->disaster_date }}</div></td>
+                        <td>
+                            <strong>{{ $disaster->type }}</strong>
+                            <div class="muted">{{ $disaster->country ?? 'Unknown' }}</div>
+                        </td>
                         <td>{{ $disaster->city ?? 'Unknown' }}, {{ $disaster->district ?? 'Unknown' }}</td>
+                        <td>{{ number_format($disaster->affected_population ?? 0) }}</td>
+                        <td>{{ \Carbon\Carbon::parse($disaster->disaster_date)->format('M d, Y') }}</td>
                         <td><span class="status-pill status-{{ $disaster->status }}">{{ $disaster->status }}</span></td>
                         <td>
                             <form method="POST" action="{{ route('official.disasters.update-status', $disaster->id) }}" class="inline-form">
@@ -41,7 +48,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="empty-state">No approved disasters are available yet.</td></tr>
+                    <tr><td colspan="6" class="empty-state">No approved disasters are available yet.</td></tr>
                 @endforelse
                 </tbody>
             </table>

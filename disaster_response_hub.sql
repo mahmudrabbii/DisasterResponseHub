@@ -21,7 +21,7 @@ CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     person_id INT,
     password VARCHAR(255),
-    role ENUM('admin','official','volunteer') DEFAULT 'volunteer',
+    role ENUM('public','admin','official','volunteer') DEFAULT 'volunteer',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (person_id) REFERENCES people(id)
 );
@@ -226,6 +226,8 @@ CREATE TABLE `volunteer_disaster_submissions` (
     INDEX `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+ALTER TABLE incidents ADD COLUMN image_path VARCHAR(255) NULL AFTER description;
 
 
 INSERT INTO locations (city, district, country) VALUES

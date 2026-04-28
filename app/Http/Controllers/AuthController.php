@@ -37,6 +37,8 @@ class AuthController extends Controller
             $targetRoute = 'official.dashboard';
         } elseif ($user->role === 'volunteer') {
             $targetRoute = 'volunteer.dashboard';
+        } elseif ($user->role === 'public') {
+            $targetRoute = 'public.home';
         } else {
             $targetRoute = 'dashboard';
         }
@@ -61,7 +63,7 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:people,email'],
             'phone' => ['required', 'string', 'max:20'],
-            'role' => ['required', Rule::in(['admin', 'official', 'volunteer'])],
+            'role' => ['required', Rule::in(['public', 'admin', 'official', 'volunteer'])],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
@@ -111,7 +113,7 @@ class AuthController extends Controller
     {
         $credentials = $request->validate([
             'email' => ['required', 'string', 'email'],
-            'role' => ['required', Rule::in(['admin', 'official', 'volunteer'])],
+            'role' => ['required', Rule::in(['public', 'admin', 'official', 'volunteer'])],
             'password' => ['required', 'string'],
         ]);
 

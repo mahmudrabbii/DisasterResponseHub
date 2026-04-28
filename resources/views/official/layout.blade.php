@@ -26,9 +26,12 @@
             <a class="nav-link {{ ($activePage ?? '') === 'dashboard' ? 'active' : '' }}" href="{{ route('official.dashboard') }}">Dashboard</a>
             <a class="nav-link {{ ($activePage ?? '') === 'disasters' ? 'active' : '' }}" href="{{ route('official.disasters') }}">Disaster Handling</a>
             <a class="nav-link {{ ($activePage ?? '') === 'volunteers' ? 'active' : '' }}" href="{{ route('official.volunteers') }}">Volunteer Coordination</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'volunteer-submissions' ? 'active' : '' }}" href="{{ route('official.volunteer-submissions') }}">Volunteer Records</a>
             <a class="nav-link {{ ($activePage ?? '') === 'resources' ? 'active' : '' }}" href="{{ route('official.resources') }}">Resource Handling</a>
             <a class="nav-link {{ ($activePage ?? '') === 'community-supports' ? 'active' : '' }}" href="{{ route('official.community-supports') }}">Community Support</a>
             <a class="nav-link {{ ($activePage ?? '') === 'policies' ? 'active' : '' }}" href="{{ route('official.policies') }}">Policies</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'public-disaster-reports' ? 'active' : '' }}" href="{{ route('official.public-disaster-reports') }}">Public Disaster Reports</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'public-help-requests' ? 'active' : '' }}" href="{{ route('official.public-help-requests') }}">Help Requests</a>
         </nav>
 
         <div class="sidebar-card">
@@ -92,5 +95,6 @@
 
     <label class="sidebar-backdrop" for="official-sidebar-toggle" aria-hidden="true"></label>
 </div>
+<script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

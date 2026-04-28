@@ -31,6 +31,8 @@
             <a class="nav-link {{ ($activePage ?? '') === 'affected-people' ? 'active' : '' }}" href="{{ route('admin.affected-people') }}">Affected People</a>
             <a class="nav-link {{ ($activePage ?? '') === 'aid-requests' ? 'active' : '' }}" href="{{ route('admin.aid-requests') }}">Aid Requests</a>
             <a class="nav-link {{ ($activePage ?? '') === 'disaster-submissions' ? 'active' : '' }}" href="{{ route('admin.disaster-submissions') }}">Volunteer Reports</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'public-disaster-reports' ? 'active' : '' }}" href="{{ route('admin.public-disaster-reports') }}">Public Disaster Reports</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'public-help-requests' ? 'active' : '' }}" href="{{ route('admin.public-help-requests') }}">Public Help Requests</a>
         </nav>
 
         <div class="sidebar-card">
@@ -78,5 +80,7 @@
 
     <label class="sidebar-backdrop" for="admin-sidebar-toggle" aria-hidden="true"></label>
 </div>
+<script src="{{ asset('js/weather.js') }}"></script>
+<script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

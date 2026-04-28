@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class OfficialController extends Controller
 {
@@ -130,6 +131,8 @@ class OfficialController extends Controller
             ->select(
                 'b.id as beneficiary_id',
                 'b.person_id',
+                'b.location_id',
+                'b.disaster_id',
                 'p.name',
                 'p.email',
                 'p.phone',
@@ -496,5 +499,203 @@ class OfficialController extends Controller
         });
 
         return redirect()->route('official.dashboard')->with('status', 'Policy created and broadcast to alerts.');
+    }
+
+    public function publicDisasterReports()
+    {
+        $reports = DB::table('incidents as i')
+            ->join('disasters as d', 'i.disaster_id', '=', 'd.id')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->where('i.status', '!=', 'resolved')
+            ->orderByDesc('i.created_at')
+            ->select(
+                'i.id',
+                'i.title',
+                'i.description',
+                'i.severity',
+                'i.status',
+                'i.created_at',
+                'd.type as disaster_type',
+                'l.city',
+                'l.district'
+            )
+            ->paginate(20);
+
+        return view('official.public-disaster-reports', array_merge($this->layoutData('public-disaster-reports'), [
+            'reports' => $reports,
+        ]));
+    }
+
+    public function reviewDisasterReport($reportId)
+    {
+        $report = DB::table('incidents as i')
+            ->join('disasters as d', 'i.disaster_id', '=', 'd.id')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->where('i.id', $reportId)
+            ->select(
+                'i.id',
+                'i.title',
+                'i.description',
+                'i.severity',
+                'i.status',
+                'i.created_at',
+                'i.image_path',
+                'd.type as disaster_type',
+                'l.city',
+                'l.district'
+            )
+            ->first();
+
+        if (!$report) {
+            abort(404, 'Disaster report not found.');
+        }
+
+        return view('official.disaster-report-detail', array_merge($this->layoutData('public-disaster-reports'), [
+            'report' => $report,
+        ]));
+    }
+
+    public function publicHelpRequests()
+    {
+        $requests = DB::table('aid_requests as ar')
+            ->join('people as p', 'ar.person_id', '=', 'p.id')
+            ->leftJoin('locations as l', 'ar.location_id', '=', 'l.id')
+            ->where('ar.status', '!=', 'completed')
+            ->orderByDesc('ar.created_at')
+            ->select(
+                'ar.id',
+                'ar.aid_type_id',
+                'ar.description',
+                'ar.status',
+                'ar.created_at',
+                'p.name',
+                'p.email',
+                'p.phone',
+                'l.city',
+                'l.district'
+            )
+            ->paginate(20);
+
+        return view('official.public-help-requests', array_merge($this->layoutData('public-help-requests'), [
+            'requests' => $requests,
+        ]));
+    }
+
+    public function approveHelpRequest(Request $request, $requestId)
+    {
+        $validated = $request->validate([
+            'status' => ['required', 'in:pending,approved,rejected,completed'],
+        ]);
+
+        DB::table('aid_requests')
+            ->where('id', $requestId)
+            ->update([
+                'status' => $validated['status'],
+                'updated_at' => now(),
+            ]);
+
+        return redirect()
+            ->route('official.public-help-requests')
+            ->with('status', 'Help request status updated successfully.');
+    }
+
+    public function volunteerSubmissions()
+    {
+        $volunteerSubmissions = DB::table('volunteer_disaster_submissions as vds')
+            ->join('people as p', 'vds.person_id', '=', 'p.id')
+            ->join('disasters as d', 'vds.disaster_id', '=', 'd.id')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->orderByDesc('vds.created_at')
+            ->select(
+                'vds.id',
+                'vds.person_id',
+                'vds.disaster_id',
+                'vds.title',
+                'vds.description',
+                'vds.submission_type',
+                'vds.status',
+                'vds.admin_notes',
+                'vds.created_at',
+                'vds.updated_at',
+                'p.name as volunteer_name',
+                'p.email as volunteer_email',
+                'p.phone as volunteer_phone',
+                'd.type as disaster_type',
+                'd.disaster_date',
+                'l.city',
+                'l.district'
+            )
+            ->get()
+            ->map(function ($submission) {
+                $submission->created_at = Carbon::parse($submission->created_at);
+                $submission->updated_at = Carbon::parse($submission->updated_at);
+                return $submission;
+            });
+
+        return view('official.volunteer-submissions', array_merge($this->layoutData('volunteer-submissions'), [
+            'volunteerSubmissions' => $volunteerSubmissions,
+        ]));
+    }
+
+    public function showVolunteerSubmission(int $submissionId)
+    {
+        $submission = DB::table('volunteer_disaster_submissions as vds')
+            ->join('people as p', 'vds.person_id', '=', 'p.id')
+            ->join('disasters as d', 'vds.disaster_id', '=', 'd.id')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->where('vds.id', $submissionId)
+            ->select(
+                'vds.id',
+                'vds.person_id',
+                'vds.disaster_id',
+                'vds.title',
+                'vds.description',
+                'vds.submission_type',
+                'vds.status',
+                'vds.admin_notes',
+                'vds.created_at',
+                'vds.updated_at',
+                'p.name as volunteer_name',
+                'p.email as volunteer_email',
+                'p.phone as volunteer_phone',
+                'd.type as disaster_type',
+                'd.disaster_date',
+                'l.city',
+                'l.district'
+            )
+            ->first();
+
+        abort_if(!$submission, 404);
+
+        $submission->created_at = Carbon::parse($submission->created_at);
+        $submission->updated_at = Carbon::parse($submission->updated_at);
+
+        return view('official.volunteer-submission-detail', array_merge($this->layoutData('volunteer-submissions'), [
+            'submission' => $submission,
+        ]));
+    }
+
+    public function updateVolunteerSubmission(Request $request, int $submissionId)
+    {
+        $submission = DB::table('volunteer_disaster_submissions')->where('id', $submissionId)->first();
+
+        abort_if(!$submission, 404);
+
+        $validated = $request->validate([
+            'status' => ['required', Rule::in(['pending', 'approved', 'rejected'])],
+            'admin_notes' => ['nullable', 'string', 'max:5000'],
+        ]);
+
+        DB::table('volunteer_disaster_submissions')
+            ->where('id', $submissionId)
+            ->update([
+                'status' => $validated['status'],
+                'admin_notes' => $validated['admin_notes'] ?? null,
+                'updated_at' => now(),
+            ]);
+
+        return redirect()
+            ->route('official.volunteer-submissions')
+            ->with('status', 'Submission reviewed and updated successfully.');
     }
 }

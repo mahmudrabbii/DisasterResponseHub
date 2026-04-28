@@ -364,6 +364,15 @@ a {
     overflow: hidden;
 }
 
+.panel-card.full-width > .panel-grid,
+.panel-card.full-width > div > .panel-grid {
+    padding: 0 22px 22px;
+}
+
+.panel-card.full-width > .alerts-grid {
+    padding: 0 22px 22px;
+}
+
 .panel-card.full-width .panel-header {
     padding: 22px 22px 0;
     margin-bottom: 14px;
@@ -441,6 +450,12 @@ a {
 
 .form-wide {
     grid-column: 1 / -1;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
 }
 
 label {
