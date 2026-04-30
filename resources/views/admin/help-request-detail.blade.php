@@ -74,10 +74,10 @@
             <div class="form-group form-wide">
                 <label for="status">Request Status</label>
                 <select id="status" name="status" required>
-                    <option value="pending" @selected($request_data->status === 'pending')>Pending</option>
-                    <option value="approved" @selected($request_data->status === 'approved')>Approved</option>
-                    <option value="rejected" @selected($request_data->status === 'rejected')>Rejected</option>
-                    <option value="completed" @selected($request_data->status === 'completed')>Completed</option>
+                    <option value="pending" @selected('pending')>Pending</option>
+                    <option value="approved" @selected('approved')>Approved</option>
+                    <option value="rejected" @selected('rejected')>Rejected</option>
+                    <option value="completed" @selected('completed')>Completed</option>
                 </select>
             </div>
 

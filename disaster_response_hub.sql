@@ -230,6 +230,19 @@ CREATE TABLE `volunteer_disaster_submissions` (
 ALTER TABLE incidents ADD COLUMN image_path VARCHAR(255) NULL AFTER description;
 
 
+
+
+CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id VARCHAR(100),
+    sp_order_id VARCHAR(100),
+    amount DECIMAL(10,2),
+    status VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 INSERT INTO locations (city, district, country) VALUES
 ('Dhaka', 'Dhaka', 'Bangladesh'),
 ('Chattogram', 'Chattogram', 'Bangladesh'),

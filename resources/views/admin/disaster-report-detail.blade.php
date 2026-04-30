@@ -72,9 +72,9 @@
             <div class="form-group form-wide">
                 <label for="status">Report Status</label>
                 <select id="status" name="status" required>
-                    <option value="reported" @selected($report->status === 'reported')>Reported</option>
-                    <option value="in_progress" @selected($report->status === 'in_progress')>In Progress</option>
-                    <option value="resolved" @selected($report->status === 'resolved')>Resolved</option>
+                    <option value="reported" @selected('reported')>Reported</option>
+                    <option value="in_progress" @selected('in progress')>In Progress</option>
+                    <option value="resolved" @selected('resolved')>Resolved</option>
                 </select>
             </div>
 

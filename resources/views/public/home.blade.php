@@ -67,7 +67,7 @@
             </div>
         </section>
     @endif
-
+{{-- 
     @if ($alerts->count() > 0)
         <section class="panel-card full-width recent-disasters-section">
             <div class="panel-header">
@@ -86,4 +86,5 @@
             </div>
         </section>
     @endif
+    --}}
 @endsection

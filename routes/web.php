@@ -4,8 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\VolunteerController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ShurjopayPaymentController;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,6 +26,14 @@ Route::post('/request-help', [PublicController::class, 'storeHelpRequest'])->nam
 Route::get('/alerts', [PublicController::class, 'viewAlerts'])->name('public.alerts');
 Route::get('/disasters', [PublicController::class, 'viewDisasters'])->name('public.disasters');
 Route::get('/donate', [PublicController::class, 'donate'])->name('public.donate');
+
+// Shurjopay Payment Gateway Routes
+Route::prefix('/payment/shurjopay')->group(function () {
+    Route::get('/{campaignId}', [ShurjopayPaymentController::class, 'showPaymentForm'])->name('payment.shurjopay-form');
+    Route::post('/create', [ShurjopayPaymentController::class, 'createPaymentSession'])->name('payment.shurjopay-create');
+    Route::get('/verify', [ShurjopayPaymentController::class, 'verifyPayment'])->name('payment.shurjopay-verify');
+    Route::post('/ipn', [ShurjopayPaymentController::class, 'handleIPN'])->name('payment.shurjopay-ipn');
+});
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -53,50 +62,55 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
-Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
-Route::get('/admin/weather', [App\Http\Controllers\AdminController::class, 'weather'])->name('admin.weather');
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::get('/admin/weather', [AdminController::class, 'weather'])->name('admin.weather');
 
-Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'users'])->name('admin.users');
-Route::post('/admin/users', [App\Http\Controllers\AdminController::class, 'storeUser'])->name('admin.users.store');
-Route::patch('/admin/users/{userId}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('admin.users.update');
-Route::delete('/admin/users/{userId}', [App\Http\Controllers\AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
+Route::patch('/admin/users/{userId}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+Route::delete('/admin/users/{userId}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 
-Route::get('/admin/disasters', [App\Http\Controllers\AdminController::class, 'disasters'])->name('admin.disasters');
-Route::post('/admin/disasters', [App\Http\Controllers\AdminController::class, 'storeDisaster'])->name('admin.disasters.store');
-Route::patch('/admin/disasters/{disasterId}', [App\Http\Controllers\AdminController::class, 'updateDisaster'])->name('admin.disasters.update');
-Route::delete('/admin/disasters/{disasterId}', [App\Http\Controllers\AdminController::class, 'destroyDisaster'])->name('admin.disasters.destroy');
+Route::get('/admin/disasters', [AdminController::class, 'disasters'])->name('admin.disasters');
+Route::post('/admin/disasters', [AdminController::class, 'storeDisaster'])->name('admin.disasters.store');
+Route::patch('/admin/disasters/{disasterId}', [AdminController::class, 'updateDisaster'])->name('admin.disasters.update');
+Route::delete('/admin/disasters/{disasterId}', [AdminController::class, 'destroyDisaster'])->name('admin.disasters.destroy');
 
-Route::get('/admin/volunteers', [App\Http\Controllers\AdminController::class, 'volunteers'])->name('admin.volunteers');
-Route::patch('/admin/volunteers/{volunteerId}', [App\Http\Controllers\AdminController::class, 'updateVolunteer'])->name('admin.volunteers.update');
-Route::post('/admin/volunteer-assignments', [App\Http\Controllers\AdminController::class, 'storeVolunteerAssignment'])->name('admin.volunteer-assignments.store');
-Route::delete('/admin/volunteer-assignments/{assignmentId}', [App\Http\Controllers\AdminController::class, 'destroyVolunteerAssignment'])->name('admin.volunteer-assignments.destroy');
+Route::get('/admin/volunteers', [AdminController::class, 'volunteers'])->name('admin.volunteers');
+Route::patch('/admin/volunteers/{volunteerId}', [AdminController::class, 'updateVolunteer'])->name('admin.volunteers.update');
+Route::post('/admin/volunteer-assignments', [AdminController::class, 'storeVolunteerAssignment'])->name('admin.volunteer-assignments.store');
+Route::delete('/admin/volunteer-assignments/{assignmentId}', [AdminController::class, 'destroyVolunteerAssignment'])->name('admin.volunteer-assignments.destroy');
 
-Route::get('/admin/resources', [App\Http\Controllers\AdminController::class, 'resources'])->name('admin.resources');
-Route::post('/admin/resources', [App\Http\Controllers\AdminController::class, 'storeResource'])->name('admin.resources.store');
-Route::patch('/admin/resources/{resourceId}', [App\Http\Controllers\AdminController::class, 'updateResource'])->name('admin.resources.update');
-Route::delete('/admin/resources/{resourceId}', [App\Http\Controllers\AdminController::class, 'destroyResource'])->name('admin.resources.destroy');
+Route::get('/admin/resources', [AdminController::class, 'resources'])->name('admin.resources');
+Route::post('/admin/resources', [AdminController::class, 'storeResource'])->name('admin.resources.store');
+Route::patch('/admin/resources/{resourceId}', [AdminController::class, 'updateResource'])->name('admin.resources.update');
+Route::delete('/admin/resources/{resourceId}', [AdminController::class, 'destroyResource'])->name('admin.resources.destroy');
 
-Route::get('/admin/affected-people', [App\Http\Controllers\AdminController::class, 'affectedPeople'])->name('admin.affected-people');
-Route::post('/admin/affected-people', [App\Http\Controllers\AdminController::class, 'storeAffectedPerson'])->name('admin.affected-people.store');
-Route::patch('/admin/affected-people/{beneficiaryId}', [App\Http\Controllers\AdminController::class, 'updateAffectedPerson'])->name('admin.affected-people.update');
-Route::delete('/admin/affected-people/{beneficiaryId}', [App\Http\Controllers\AdminController::class, 'destroyAffectedPerson'])->name('admin.affected-people.destroy');
+Route::get('/admin/affected-people', [AdminController::class, 'affectedPeople'])->name('admin.affected-people');
+Route::post('/admin/affected-people', [AdminController::class, 'storeAffectedPerson'])->name('admin.affected-people.store');
+Route::patch('/admin/affected-people/{beneficiaryId}', [AdminController::class, 'updateAffectedPerson'])->name('admin.affected-people.update');
+Route::delete('/admin/affected-people/{beneficiaryId}', [AdminController::class, 'destroyAffectedPerson'])->name('admin.affected-people.destroy');
 
-Route::get('/admin/aid-requests', [App\Http\Controllers\AdminController::class, 'aidRequests'])->name('admin.aid-requests');
-Route::post('/admin/aid-requests', [App\Http\Controllers\AdminController::class, 'storeAidRequest'])->name('admin.aid-requests.store');
-Route::patch('/admin/aid-requests/{requestId}', [App\Http\Controllers\AdminController::class, 'updateAidRequest'])->name('admin.aid-requests.update');
-Route::delete('/admin/aid-requests/{requestId}', [App\Http\Controllers\AdminController::class, 'destroyAidRequest'])->name('admin.aid-requests.destroy');
+Route::get('/admin/aid-requests', [AdminController::class, 'aidRequests'])->name('admin.aid-requests');
+Route::post('/admin/aid-requests', [AdminController::class, 'storeAidRequest'])->name('admin.aid-requests.store');
+Route::patch('/admin/aid-requests/{requestId}', [AdminController::class, 'updateAidRequest'])->name('admin.aid-requests.update');
+Route::delete('/admin/aid-requests/{requestId}', [AdminController::class, 'destroyAidRequest'])->name('admin.aid-requests.destroy');
 
-Route::get('/admin/disaster-submissions', [App\Http\Controllers\AdminController::class, 'disasterSubmissions'])->name('admin.disaster-submissions');
-Route::get('/admin/disaster-submissions/{submissionId}', [App\Http\Controllers\AdminController::class, 'showDisasterSubmissionReview'])->name('admin.disaster-submissions.show');
-Route::patch('/admin/disaster-submissions/{submissionId}', [App\Http\Controllers\AdminController::class, 'updateDisasterSubmission'])->name('admin.disaster-submissions.update');
+Route::get('/admin/donations', [AdminController::class, 'donations'])->name('admin.donations');
+Route::post('/admin/donations', [AdminController::class, 'storeDonation'])->name('admin.donations.store');
+Route::patch('/admin/donations/{donationId}', [AdminController::class, 'updateDonation'])->name('admin.donations.update');
+Route::delete('/admin/donations/{donationId}', [AdminController::class, 'destroyDonation'])->name('admin.donations.destroy');
 
-Route::get('/admin/public-disaster-reports', [App\Http\Controllers\AdminController::class, 'publicDisasterReports'])->name('admin.public-disaster-reports');
-Route::get('/admin/public-disaster-reports/{reportId}', [App\Http\Controllers\AdminController::class, 'reviewDisasterReport'])->name('admin.public-disaster-reports.show');
-Route::patch('/admin/public-disaster-reports/{reportId}', [App\Http\Controllers\AdminController::class, 'updateDisasterReportStatus'])->name('admin.public-disaster-reports.update');
+Route::get('/admin/disaster-submissions', [AdminController::class, 'disasterSubmissions'])->name('admin.disaster-submissions');
+Route::get('/admin/disaster-submissions/{submissionId}', [AdminController::class, 'showDisasterSubmissionReview'])->name('admin.disaster-submissions.show');
+Route::patch('/admin/disaster-submissions/{submissionId}', [AdminController::class, 'updateDisasterSubmission'])->name('admin.disaster-submissions.update');
 
-Route::get('/admin/public-help-requests', [App\Http\Controllers\AdminController::class, 'publicHelpRequests'])->name('admin.public-help-requests');
-Route::get('/admin/public-help-requests/{requestId}', [App\Http\Controllers\AdminController::class, 'reviewHelpRequest'])->name('admin.public-help-requests.show');
-Route::patch('/admin/public-help-requests/{requestId}', [App\Http\Controllers\AdminController::class, 'updateHelpRequestStatus'])->name('admin.public-help-requests.update');
+Route::get('/admin/public-disaster-reports', [AdminController::class, 'publicDisasterReports'])->name('admin.public-disaster-reports');
+Route::get('/admin/public-disaster-reports/{reportId}', [AdminController::class, 'reviewDisasterReport'])->name('admin.public-disaster-reports.show');
+Route::patch('/admin/public-disaster-reports/{reportId}', [AdminController::class, 'updateDisasterReportStatus'])->name('admin.public-disaster-reports.update');
+
+Route::get('/admin/public-help-requests', [AdminController::class, 'publicHelpRequests'])->name('admin.public-help-requests');
+Route::get('/admin/public-help-requests/{requestId}', [AdminController::class, 'reviewHelpRequest'])->name('admin.public-help-requests.show');
+Route::patch('/admin/public-help-requests/{requestId}', [AdminController::class, 'updateHelpRequestStatus'])->name('admin.public-help-requests.update');
 
 Route::get('/official/dashboard', [OfficialController::class, 'dashboard'])->name('official.dashboard');
 Route::get('/official/disasters', [OfficialController::class, 'disasters'])->name('official.disasters');
@@ -116,6 +130,11 @@ Route::post('/official/resource-usage', [OfficialController::class, 'storeResour
 Route::post('/official/community-supports', [OfficialController::class, 'storeCommunitySupport'])->name('official.community-supports.store');
 Route::patch('/official/community-supports/{beneficiaryId}', [OfficialController::class, 'updateCommunitySupport'])->name('official.community-supports.update');
 Route::post('/official/policies', [OfficialController::class, 'storePolicy'])->name('official.policies.store');
+
+Route::get('/official/donations', [OfficialController::class, 'donations'])->name('official.donations');
+Route::post('/official/donations', [OfficialController::class, 'storeDonation'])->name('official.donations.store');
+Route::patch('/official/donations/{donationId}', [OfficialController::class, 'updateDonation'])->name('official.donations.update');
+Route::delete('/official/donations/{donationId}', [OfficialController::class, 'destroyDonation'])->name('official.donations.destroy');
 
 Route::get('/official/public-disaster-reports', [OfficialController::class, 'publicDisasterReports'])->name('official.public-disaster-reports');
 Route::get('/official/public-disaster-reports/{reportId}', [OfficialController::class, 'reviewDisasterReport'])->name('official.public-disaster-reports.show');
@@ -139,3 +158,9 @@ Route::get('/volunteer/disaster-submissions/{submissionId}', [VolunteerControlle
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+
+
+Route::get('/pay', [PaymentController::class, 'pay']);
+Route::get('/payment/response', [PaymentController::class, 'response']);
+Route::get('/payment/cancel', [PaymentController::class, 'cancel']);

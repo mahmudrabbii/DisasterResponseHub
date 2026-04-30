@@ -698,4 +698,94 @@ class OfficialController extends Controller
             ->route('official.volunteer-submissions')
             ->with('status', 'Submission reviewed and updated successfully.');
     }
+
+    public function donations()
+    {
+        $donations = DB::table('fundraising as f')
+            ->leftJoin('people as p', 'f.person_id', '=', 'p.id')
+            ->leftJoin('disasters as d', 'f.disaster_id', '=', 'd.id')
+            ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->orderByDesc('f.created_at')
+            ->select(
+                'f.id',
+                'f.person_id',
+                'f.disaster_id',
+                'f.title',
+                'f.amount',
+                'f.role',
+                'f.status',
+                'f.created_at',
+                'p.name as person_name',
+                'd.type as disaster_type',
+                'l.city',
+                'l.district'
+            )
+            ->get();
+
+        $disasters = DB::table('disasters')->orderByDesc('created_at')->get();
+        $people = DB::table('people')->orderBy('name')->get();
+
+        return view('official.donations', array_merge($this->layoutData('donations'), [
+            'donations' => $donations,
+            'disasters' => $disasters,
+            'people' => $people,
+        ]));
+    }
+
+    public function storeDonation(Request $request)
+    {
+        $validated = $request->validate([
+            'person_id' => ['required', 'exists:people,id'],
+            'disaster_id' => ['required', 'exists:disasters,id'],
+            'title' => ['required', 'string', 'max:150'],
+            'amount' => ['required', 'numeric', 'min:0'],
+            'role' => ['required', 'in:donor,organizer'],
+            'status' => ['required', 'in:active,completed'],
+        ]);
+
+        DB::table('fundraising')->insert([
+            'person_id' => $validated['person_id'],
+            'disaster_id' => $validated['disaster_id'],
+            'title' => $validated['title'],
+            'amount' => $validated['amount'],
+            'role' => $validated['role'],
+            'status' => $validated['status'],
+            'created_at' => now(),
+        ]);
+
+        return redirect()->route('official.donations')->with('status', 'Donation record created successfully.');
+    }
+
+    public function updateDonation(Request $request, int $donationId)
+    {
+        $donation = DB::table('fundraising')->where('id', $donationId)->first();
+        if (!$donation) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:150'],
+            'amount' => ['required', 'numeric', 'min:0'],
+            'role' => ['required', 'in:donor,organizer'],
+            'status' => ['required', 'in:active,completed'],
+        ]);
+
+        DB::table('fundraising')
+            ->where('id', $donationId)
+            ->update([
+                'title' => $validated['title'],
+                'amount' => $validated['amount'],
+                'role' => $validated['role'],
+                'status' => $validated['status'],
+            ]);
+
+        return redirect()->route('official.donations')->with('status', 'Donation record updated successfully.');
+    }
+
+    public function destroyDonation(int $donationId)
+    {
+        DB::table('fundraising')->where('id', $donationId)->delete();
+
+        return redirect()->route('official.donations')->with('status', 'Donation record deleted successfully.');
+    }
 }

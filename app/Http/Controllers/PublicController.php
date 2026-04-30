@@ -172,10 +172,18 @@ class PublicController extends Controller
 
     public function donate()
     {
-        // Get all active fundraising campaigns
+        // Get distinct active disasters with fundraising campaigns
+        $disasterIds = DB::table('fundraising')
+            ->where('status', 'active')
+            ->where('role', 'organizer')
+            ->distinct()
+            ->pluck('disaster_id');
+
+        // Get campaigns for these disasters
         $campaigns = DB::table('fundraising as f')
             ->leftJoin('disasters as d', 'f.disaster_id', '=', 'd.id')
             ->leftJoin('locations as l', 'd.location_id', '=', 'l.id')
+            ->whereIn('f.disaster_id', $disasterIds)
             ->where('f.status', 'active')
             ->where('f.role', 'organizer')
             ->select(
@@ -186,7 +194,7 @@ class PublicController extends Controller
                 'l.city',
                 'l.district'
             )
-            ->distinct()
+            ->distinct('f.disaster_id')
             ->get();
 
         // For each campaign, calculate stats
@@ -217,35 +225,8 @@ class PublicController extends Controller
             ];
         }
 
-        // Get recent donations
-        $recentDonations = DB::table('fundraising as f')
-            ->leftJoin('people as p', 'f.person_id', '=', 'p.id')
-            ->where('f.role', 'donor')
-            ->where('f.status', 'active')
-            ->select(
-                'p.name as donor',
-                'f.amount',
-                'f.created_at'
-            )
-            ->orderByDesc('f.created_at')
-            ->limit(5)
-            ->get();
-
-        // Calculate totals
-        $totalRaised = DB::table('fundraising')
-            ->where('role', 'donor')
-            ->sum('amount');
-
-        $totalDonors = DB::table('fundraising')
-            ->where('role', 'donor')
-            ->distinct('person_id')
-            ->count();
-
         return view('public.donate', [
             'campaigns' => $campaignStats,
-            'recentDonations' => $recentDonations,
-            'totalRaised' => $totalRaised,
-            'totalDonors' => $totalDonors,
         ]);
     }
 }

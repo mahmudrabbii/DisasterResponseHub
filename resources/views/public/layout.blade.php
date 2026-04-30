@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/DRH Logo.png') }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <link rel="stylesheet" href="{{ asset('css/public.css') }}">
+    @stack('styles')
 </head>
 <body>
 <div class="admin-shell" data-admin-shell>
@@ -25,8 +26,10 @@
 
         <nav class="nav-links">
             <a class="nav-link {{ ($activePage ?? '') === 'home' ? 'active' : '' }}" href="{{ route('public.home') }}">Home</a>
+           <!--
             <a class="nav-link {{ ($activePage ?? '') === 'disasters' ? 'active' : '' }}" href="{{ route('public.disasters') }}">View Disasters</a>
-            <!--
+            
+        
             <a class="nav-link {{ ($activePage ?? '') === 'alerts' ? 'active' : '' }}" href="{{ route('public.alerts') }}">Public Alerts</a>
             -->
             <a class="nav-link {{ ($activePage ?? '') === 'report-disaster' ? 'active' : '' }}" href="{{ route('public.report-disaster') }}">Report Disaster</a>
@@ -53,7 +56,7 @@
     </aside>
 
     <div class="workspace">
-        <!--
+        {{-- 
         <header class="topbar">
             <label class="sidebar-toggle" for="public-sidebar-toggle">Menu</label>
             <div class="topbar-copy">
@@ -61,7 +64,7 @@
                 <p>@yield('page-subtitle', 'Report disasters and request help in your community.')</p>
             </div>
         </header>
-       -->
+       --}}
         <main class="content">
             @if (session('status'))
                 <div class="status-banner">{{ session('status') }}</div>

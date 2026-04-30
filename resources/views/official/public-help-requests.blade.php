@@ -37,10 +37,10 @@
                                 @csrf
                                 @method('PATCH')
                                 <select name="status" class="status-select">
-                                    <option value="pending" @selected($request->status === 'pending')>Pending</option>
-                                    <option value="approved" @selected($request->status === 'approved')>Approve</option>
-                                    <option value="rejected" @selected($request->status === 'rejected')>Reject</option>
-                                    <option value="completed" @selected($request->status === 'completed')>Completed</option>
+                                    <option value="pending" @selected('pending')>Pending</option>
+                                    <option value="approved" @selected('approved')>Approve</option>
+                                    <option value="rejected" @selected('rejected')>Reject</option>
+                                    <option value="completed" @selected('completed')>Completed</option>
                                 </select>
                             </form>
                         </td>

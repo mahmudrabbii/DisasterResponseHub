@@ -49,7 +49,13 @@
                 <div class="checkbox-grid">
                     @foreach ($aidTypes as $aidType)
                         <div class="checkbox-item">
-                            <input type="checkbox" id="aid_{{ $aidType->id }}" name="aid_type_ids[]" value="{{ $aidType->id }}" @checked(in_array($aidType->id, old('aid_type_ids', [])))>
+                            <input 
+                                type="checkbox"
+                                id="aid_{{ $aidType->id }}"
+                                name="aid_type_ids[]"
+                                value="{{ $aidType->id }}"
+                                {{ in_array($aidType->id, old('aid_type_ids', [])) ? 'checked' : '' }}
+                            >
                             <label for="aid_{{ $aidType->id }}">{{ $aidType->name }}</label>
                         </div>
                     @endforeach

@@ -25,6 +25,7 @@
         <nav class="nav-links">
             <a class="nav-link {{ ($activePage ?? '') === 'dashboard' ? 'active' : '' }}" href="{{ route('official.dashboard') }}">Dashboard</a>
             <a class="nav-link {{ ($activePage ?? '') === 'disasters' ? 'active' : '' }}" href="{{ route('official.disasters') }}">Disaster Handling</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'donations' ? 'active' : '' }}" href="{{ route('official.donations') }}">Donations</a>
             <a class="nav-link {{ ($activePage ?? '') === 'volunteers' ? 'active' : '' }}" href="{{ route('official.volunteers') }}">Volunteer Coordination</a>
             <a class="nav-link {{ ($activePage ?? '') === 'volunteer-submissions' ? 'active' : '' }}" href="{{ route('official.volunteer-submissions') }}">Volunteer Records</a>
             <a class="nav-link {{ ($activePage ?? '') === 'resources' ? 'active' : '' }}" href="{{ route('official.resources') }}">Resource Handling</a>
