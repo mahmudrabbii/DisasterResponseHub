@@ -17,7 +17,14 @@ class ShurjoPayService
         $config->username = config('services.shurjopay.username');
         $config->password = config('services.shurjopay.password');
         $config->api_endpoint = config('services.shurjopay.api_endpoint');
-        $config->callback_url = config('services.shurjopay.callback_url');
+        
+        // Set callback URL - use configured value or generate from app URL
+        $callbackUrl = config('services.shurjopay.callback_url');
+        if (empty($callbackUrl)) {
+            $callbackUrl = route('payment.shurjopay-verify', [], true); // true for absolute URL with domain
+        }
+        $config->callback_url = $callbackUrl;
+        
         $config->order_prefix = config('services.shurjopay.prefix');
         $config->log_path = config('services.shurjopay.log_path');
         $config->ssl_verifypeer = env('CURLOPT_SSL_VERIFYPEER', 1); // 1 for SSL verification, 0 to disable
@@ -26,6 +33,7 @@ class ShurjoPayService
             'api_endpoint' => $config->api_endpoint,
             'username' => $config->username,
             'prefix' => $config->order_prefix,
+            'callback_url' => $config->callback_url,
             'log_path' => $config->log_path,
         ]);
         

@@ -2,7 +2,7 @@
 
 @section('title', 'Manage Donations - DisasterResponseHub')
 @section('page-title', 'Donation Management')
-@section('page-subtitle', 'Create, track, and manage fundraising campaigns and donor contributions.')
+@section('page-subtitle', 'Create and manage fundraising campaigns.')
 
 @section('content')
     @php
@@ -14,7 +14,7 @@
 
     <section class="panel-card">
         <div class="panel-header">
-            <h3>{{ $editingDonation ? 'Edit donation record' : 'Add new donation' }}</h3>
+            <h3>{{ $editingDonation ? 'Edit Campaign' : 'Create New Campaign' }}</h3>
             @if ($editingDonation)
                 <a href="{{ route('admin.donations') }}">Cancel edit</a>
             @endif
@@ -27,102 +27,81 @@
             @endif
 
             <div class="form-group">
-                <label for="person_id">Donor/Organizer Name</label>
-                <select id="person_id" name="person_id" required @if($editingDonation) disabled @endif>
-                    <option value="">Select Person</option>
-                    @foreach ($people as $person)
-                        <option value="{{ $person->id }}" 
-                            @selected(old('person_id'))
-                        >{{ $person->name }}</option>
-                    @endforeach
-                </select>
-                @if ($editingDonation)
-                    <input type="hidden" name="person_id" value="{{ $editingDonation->person_id }}">
-                @endif
-            </div>
-
-            <div class="form-group">
-                <label for="disaster_id">Associated Disaster</label>
+                <label for="disaster_id">Disaster <span class="required">*</span></label>
                 <select id="disaster_id" name="disaster_id" required @if($editingDonation) disabled @endif>
                     <option value="">Select Disaster</option>
                     @foreach ($disasters as $disaster)
                         <option value="{{ $disaster->id }}" 
-                            @selected(old('disaster_id'))
-                        >{{ $disaster->type }}</option>
+                            @selected(old('disaster_id', $editingDonation->disaster_id ?? ''))
+                        >{{ $disaster->type }} - {{ $disaster->disaster_date ?? 'Ongoing' }}</option>
                     @endforeach
                 </select>
                 @if ($editingDonation)
                     <input type="hidden" name="disaster_id" value="{{ $editingDonation->disaster_id }}">
                 @endif
+                <small>Select the disaster this campaign will support</small>
             </div>
 
             <div class="form-group">
-                <label for="title">Campaign/Donation Title</label>
-                <input id="title" name="title" type="text" value="{{ old('title', $editingDonation->title ?? '') }}" required>
+                <label for="title">Campaign Title <span class="required">*</span></label>
+                <input id="title" name="title" type="text" placeholder="e.g., Emergency Food & Water Relief" value="{{ old('title', $editingDonation->title ?? '') }}" required>
+                <small>Give your campaign a clear, compelling name</small>
             </div>
 
             <div class="form-group">
-                <label for="amount">Amount (৳)</label>
-                <input id="amount" name="amount" type="number" step="0.01" min="0" value="{{ old('amount', $editingDonation->amount ?? '') }}" required>
+                <label for="amount">Target Amount (৳) <span class="required">*</span></label>
+                <input id="amount" name="amount" type="number" step="1" min="1" placeholder="e.g., 100000" value="{{ old('amount', $editingDonation->amount ?? '') }}" required>
+                <small>Set a fundraising goal for this campaign</small>
             </div>
 
-            <div class="form-group">
-                <label for="role">Role Type</label>
-                <select id="role" name="role" required>
-                    <option value="">Select Role</option>
-                    <option value="donor" @selected(old('role'))>Donor</option>
-                    <option value="organizer" @selected(old('role'))>Campaign Organizer</option>
-                </select>
-            </div>
+            <!-- Hidden field for campaign role -->
+            <input type="hidden" name="role" value="organizer">
 
             <div class="form-group">
-                <label for="status">Status</label>
+                <label for="status">Status <span class="required">*</span></label>
                 <select id="status" name="status" required>
                     <option value="">Select Status</option>
-                    <option value="active" @selected(old('status'))>Active</option>
-                    <option value="completed" @selected(old('status'))>Completed</option>
+                    <option value="active" @selected(old('status', $editingDonation->status ?? '') === 'active')>Active (Accepting Donations)</option>
+                    <option value="completed" @selected(old('status', $editingDonation->status ?? '') === 'completed')>Completed (Closed)</option>
                 </select>
+                <small>Active campaigns accept public donations</small>
             </div>
 
             <div class="form-actions form-wide">
-                <button type="submit" class="primary-action">{{ $editingDonation ? 'Update donation' : 'Create donation' }}</button>
+                <button type="submit" class="primary-action">{{ $editingDonation ? 'Update Campaign' : 'Create Campaign' }}</button>
             </div>
         </form>
     </section>
 
     <section class="panel-card full-width">
         <div class="panel-header">
-            <h3>All donations</h3>
-            <span class="muted">{{ $donations->count() }} records</span>
+            <h3>Active Campaigns</h3>
+            <span class="muted">{{ $donations->count() }} campaign(s)</span>
         </div>
 
         <div class="table-wrap">
             <table>
                 <thead>
                 <tr>
-                    <th>Title</th>
-                    <th>Donor/Organizer</th>
+                    <th>Campaign Title</th>
                     <th>Disaster</th>
-                    <th>Amount (৳)</th>
-                    <th>Role</th>
+                    <th>Target Amount (৳)</th>
                     <th>Status</th>
-                    <th>Date</th>
+                    <th>Created</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 @forelse ($donations as $donation)
                     <tr>
-                        <td>{{ $donation->title }}</td>
-                        <td>{{ $donation->person_name ?? 'N/A' }}</td>
+                        <td><strong>{{ $donation->title }}</strong></td>
                         <td>{{ $donation->disaster_type ?? 'N/A' }}</td>
-                        <td>{{ number_format($donation->amount, 2) }}</td>
-                        <td><span class="status-pill status-{{ $donation->role }}">{{ $donation->role }}</span></td>
-                        <td><span class="status-pill status-{{ $donation->status }}">{{ $donation->status }}</span></td>
-                        <td>{{ $donation->created_at }}</td>
+                        <td>৳{{ number_format($donation->amount, 0) }}</td>
+                        <td><span class="status-pill status-{{ $donation->status }}">{{ ucfirst($donation->status) }}</span></td>
+                        <td>{{ \Carbon\Carbon::parse($donation->created_at)->format('M d, Y') }}</td>
                         <td class="actions-cell">
                             <a class="action-link" href="{{ route('admin.donations', ['edit' => $donation->id]) }}">Edit</a>
-                            <form method="POST" action="{{ route('admin.donations.destroy', $donation->id) }}" class="inline-form" onsubmit="return confirm('Delete this donation record?');">
+                            <form method="POST" action="{{ route('admin.donations.destroy', $donation->id) }}" class="inline-form" onsubmit="return confirm('Delete this campaign? This cannot be undone.');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="danger-btn">Delete</button>
@@ -130,10 +109,24 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="8" class="empty-state">No donation records found.</td></tr>
+                    <tr><td colspan="6" class="empty-state">No campaigns created yet. <a href="{{ route('admin.donations') }}">Create your first campaign</a></td></tr>
                 @endforelse
                 </tbody>
             </table>
         </div>
     </section>
+
+    <style>
+        .required {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 4px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+    </style>
 @endsection

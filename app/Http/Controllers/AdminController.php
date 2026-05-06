@@ -40,6 +40,8 @@ class AdminController extends Controller
             'total_resources' => (int) DB::table('resources')->sum('quantity'),
             'total_donations' => (float) DB::table('fundraising')->sum('amount'),
             'total_affected_people' => DB::table('beneficiaries')->count(),
+            'total_transactions' => DB::table('transactions')->where('status', 'completed')->count(),
+            'total_transaction_amount' => (float) DB::table('transactions')->where('status', 'completed')->sum('amount'),
         ];
     }
 
@@ -103,6 +105,14 @@ class AdminController extends Controller
             ->limit(5)
             ->get();
 
+        $transactions = DB::table('transactions as t')
+            ->leftJoin('fundraising as f', 't.campaign_id', '=', 'f.id')
+            ->where('t.status', 'completed')
+            ->orderByDesc('t.created_at')
+            ->select('t.order_id', 't.donor_name', 't.donor_email', 't.amount', 't.payment_method', 't.status', 't.created_at', 'f.title as campaign_title')
+            ->limit(10)
+            ->get();
+
         $alerts = DB::table('alerts')
             ->orderByDesc('created_at')
             ->limit(6)
@@ -117,6 +127,7 @@ class AdminController extends Controller
             'recentUsers' => $users,
             'recentDisasters' => $disasters,
             'recentResources' => $resources,
+            'recentTransactions' => $transactions,
             'alerts' => $alerts,
             'policies' => $policies,
             'weather' => $this->dashboardWeather(),
@@ -1056,16 +1067,16 @@ class AdminController extends Controller
     public function storeDonation(Request $request)
     {
         $validated = $request->validate([
-            'person_id' => ['required', 'exists:people,id'],
+            'person_id' => ['nullable'],
             'disaster_id' => ['required', 'exists:disasters,id'],
             'title' => ['required', 'string', 'max:150'],
-            'amount' => ['required', 'numeric', 'min:0'],
+            'amount' => ['required', 'numeric', 'min:1'],
             'role' => ['required', 'in:donor,organizer'],
             'status' => ['required', 'in:active,completed'],
         ]);
 
         DB::table('fundraising')->insert([
-            'person_id' => $validated['person_id'],
+            'person_id' => null,
             'disaster_id' => $validated['disaster_id'],
             'title' => $validated['title'],
             'amount' => $validated['amount'],
@@ -1108,5 +1119,54 @@ class AdminController extends Controller
         DB::table('fundraising')->where('id', $donationId)->delete();
 
         return redirect()->route('admin.donations')->with('status', 'Donation record deleted successfully.');
+    }
+
+    /**
+     * View all transactions from ShurjoPay donations
+     */
+    public function transactions(Request $request)
+    {
+        $query = DB::table('transactions as t')
+            ->leftJoin('fundraising as f', 't.campaign_id', '=', 'f.id')
+            ->orderByDesc('t.created_at')
+            ->select(
+                't.id',
+                't.order_id',
+                't.donor_name',
+                't.donor_email',
+                't.donor_phone',
+                't.amount',
+                't.payment_method',
+                't.status',
+                't.created_at',
+                't.updated_at',
+                'f.id as campaign_id',
+                'f.title as campaign_title'
+            );
+
+        // Filter by status if provided
+        if ($request->filled('status')) {
+            $query->where('t.status', $request->get('status'));
+        }
+
+        // Filter by payment method if provided
+        if ($request->filled('method')) {
+            $query->where('t.payment_method', $request->get('method'));
+        }
+
+        // Search by donor name or email
+        if ($request->filled('search')) {
+            $search = '%' . $request->get('search') . '%';
+            $query->where(function($q) use ($search) {
+                $q->where('t.donor_name', 'like', $search)
+                  ->orWhere('t.donor_email', 'like', $search);
+            });
+        }
+
+        $transactions = $query->paginate(25);
+
+        return view('admin.transactions', array_merge($this->adminLayoutData('transactions'), [
+            'transactions' => $transactions,
+        ]));
     }
 }

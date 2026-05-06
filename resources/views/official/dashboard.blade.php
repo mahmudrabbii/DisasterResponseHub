@@ -26,6 +26,16 @@
             <strong>{{ $stats['pending_supports'] }}</strong>
             <small>Beneficiary cases awaiting approval</small>
         </article>
+        <article class="metric-card">
+            <span>Total transactions</span>
+            <strong>{{ $stats['total_transactions'] }}</strong>
+            <small>Completed donation transactions</small>
+        </article>
+        <article class="metric-card">
+            <span>Transaction revenue</span>
+            <strong>৳{{ number_format($stats['total_transaction_amount'], 2) }}</strong>
+            <small>Total amount from all donations</small>
+        </article>
     </section>
 
     <section class="panel-grid">
@@ -73,6 +83,45 @@
             </div>
         </article>
     -->
+
+        <article class="panel-card full-width">
+            <div class="panel-header">
+                <h3>Recent donations</h3>
+                <a href="{{ route('official.donations') }}">View all donations</a>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Donor</th>
+                        <th>Amount</th>
+                        <th>Campaign</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @forelse ($recentTransactions as $transaction)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('M d, Y H:i') }}</td>
+                            <td>
+                                <strong>{{ $transaction->donor_name }}</strong>
+                                <p>{{ $transaction->donor_email }}</p>
+                            </td>
+                            <td><strong>৳{{ number_format($transaction->amount, 2) }}</strong></td>
+                            <td>{{ $transaction->campaign_title ?? 'N/A' }}</td>
+                            <td>{{ ucfirst($transaction->payment_method) }}</td>
+                            <td><span class="status-pill status-{{ $transaction->status }}">{{ ucfirst($transaction->status) }}</span></td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="6" class="empty-state">No donations received yet.</td></tr>
+                    @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </article>
 
         <article class="panel-card">
             <div class="panel-header">

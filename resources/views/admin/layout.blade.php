@@ -27,6 +27,7 @@
             <a class="nav-link {{ ($activePage ?? '') === 'users' ? 'active' : '' }}" href="{{ route('admin.users') }}">Manage Users</a>
             <a class="nav-link {{ ($activePage ?? '') === 'disasters' ? 'active' : '' }}" href="{{ route('admin.disasters') }}">Disaster Management</a>
             <a class="nav-link {{ ($activePage ?? '') === 'donations' ? 'active' : '' }}" href="{{ route('admin.donations') }}">Donations</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'transactions' ? 'active' : '' }}" href="{{ route('admin.transactions') }}">Transaction History</a>
             <a class="nav-link {{ ($activePage ?? '') === 'volunteers' ? 'active' : '' }}" href="{{ route('admin.volunteers') }}">Volunteer List</a>
             <a class="nav-link {{ ($activePage ?? '') === 'resources' ? 'active' : '' }}" href="{{ route('admin.resources') }}">Resource Inventory</a>
             <a class="nav-link {{ ($activePage ?? '') === 'affected-people' ? 'active' : '' }}" href="{{ route('admin.affected-people') }}">Affected People</a>

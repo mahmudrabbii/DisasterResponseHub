@@ -29,10 +29,25 @@ Route::get('/donate', [PublicController::class, 'donate'])->name('public.donate'
 
 // Shurjopay Payment Gateway Routes
 Route::prefix('/payment/shurjopay')->group(function () {
-    Route::get('/{campaignId}', [ShurjopayPaymentController::class, 'showPaymentForm'])->name('payment.shurjopay-form');
+    // Specific routes first (more specific before generic)
     Route::post('/create', [ShurjopayPaymentController::class, 'createPaymentSession'])->name('payment.shurjopay-create');
-    Route::get('/verify', [ShurjopayPaymentController::class, 'verifyPayment'])->name('payment.shurjopay-verify');
+    Route::match(['get', 'post'], '/verify', [ShurjopayPaymentController::class, 'verifyPayment'])->name('payment.shurjopay-verify');
     Route::post('/ipn', [ShurjopayPaymentController::class, 'handleIPN'])->name('payment.shurjopay-ipn');
+    Route::match(['get', 'post'], '/status/{orderId?}', [ShurjopayPaymentController::class, 'checkPaymentStatus'])->name('payment.shurjopay-status');
+    Route::get('/confirmation/{orderId}', [ShurjopayPaymentController::class, 'showConfirmation'])->name('payment.confirmation');
+    // Test endpoint to manually verify a payment
+    Route::get('/test-verify/{orderId}', function($orderId) {
+        return redirect()->route('payment.shurjopay-verify', ['order_id' => $orderId]);
+    })->name('payment.test-verify');
+    // Debug endpoint to check if route is working
+    Route::get('/test-route', function() {
+        return response()->json([
+            'message' => 'Shurjopay routes are working',
+            'timestamp' => now(),
+        ]);
+    })->name('payment.test-route');
+    // Generic route last (catch-all)
+    Route::get('/{campaignId}', [ShurjopayPaymentController::class, 'showPaymentForm'])->name('payment.shurjopay-form');
 });
 
 Route::middleware('guest')->group(function () {
@@ -99,6 +114,7 @@ Route::get('/admin/donations', [AdminController::class, 'donations'])->name('adm
 Route::post('/admin/donations', [AdminController::class, 'storeDonation'])->name('admin.donations.store');
 Route::patch('/admin/donations/{donationId}', [AdminController::class, 'updateDonation'])->name('admin.donations.update');
 Route::delete('/admin/donations/{donationId}', [AdminController::class, 'destroyDonation'])->name('admin.donations.destroy');
+Route::get('/admin/transactions', [AdminController::class, 'transactions'])->name('admin.transactions');
 
 Route::get('/admin/disaster-submissions', [AdminController::class, 'disasterSubmissions'])->name('admin.disaster-submissions');
 Route::get('/admin/disaster-submissions/{submissionId}', [AdminController::class, 'showDisasterSubmissionReview'])->name('admin.disaster-submissions.show');

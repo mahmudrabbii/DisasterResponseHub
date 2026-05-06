@@ -37,6 +37,8 @@ class OfficialController extends Controller
             'pending_supports' => DB::table('beneficiaries')->where('support_status', 'pending')->count(),
             'policies' => DB::table('policies')->count(),
             'available_resources' => (int) DB::table('resources')->sum('quantity'),
+            'total_transactions' => DB::table('transactions')->where('status', 'completed')->count(),
+            'total_transaction_amount' => (float) DB::table('transactions')->where('status', 'completed')->sum('amount'),
         ];
     }
 
@@ -189,6 +191,14 @@ class OfficialController extends Controller
     {
         $data = $this->commonWorkspaceData();
 
+        $transactions = DB::table('transactions as t')
+            ->leftJoin('fundraising as f', 't.campaign_id', '=', 'f.id')
+            ->where('t.status', 'completed')
+            ->orderByDesc('t.created_at')
+            ->select('t.order_id', 't.donor_name', 't.donor_email', 't.amount', 't.payment_method', 't.status', 't.created_at', 'f.title as campaign_title')
+            ->limit(10)
+            ->get();
+
         return view('official.dashboard', array_merge($this->layoutData('dashboard'), [
             'approvedDisasters' => $data['approvedDisasters']->take(4),
             'volunteerAssignments' => $data['volunteerAssignments']->take(4),
@@ -201,6 +211,7 @@ class OfficialController extends Controller
             'locations' => $data['locations'],
             'volunteers' => $data['volunteers']->take(4),
             'alerts' => $data['alerts'],
+            'recentTransactions' => $transactions,
         ]));
     }
 

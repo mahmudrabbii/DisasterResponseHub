@@ -32,6 +32,16 @@
             <small>Sum of fundraising records</small>
         </article>
         <article class="metric-card">
+            <span>Total transactions</span>
+            <strong>{{ $stats['total_transactions'] }}</strong>
+            <small>Completed payment transactions</small>
+        </article>
+        <article class="metric-card">
+            <span>Transaction revenue</span>
+            <strong>৳{{ number_format($stats['total_transaction_amount'], 2) }}</strong>
+            <small>From all completed transactions</small>
+        </article>
+        <article class="metric-card">
             <span>Affected people</span>
             <strong>{{ $stats['total_affected_people'] }}</strong>
             <small>Registered beneficiary records</small>
@@ -156,6 +166,47 @@
                     </tr>
                 @empty
                     <tr><td colspan="4" class="empty-state">No inventory recorded yet.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel-card full-width">
+        <div class="panel-header">
+            <h3>Recent transactions</h3>
+            <a href="{{ route('admin.transactions') }}">View all transactions</a>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Donor</th>
+                    <th>Amount</th>
+                    <th>Campaign</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Transaction ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                @forelse ($recentTransactions as $transaction)
+                    <tr>
+                        <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('M d, Y H:i') }}</td>
+                        <td>
+                            <strong>{{ $transaction->donor_name }}</strong>
+                            <p>{{ $transaction->donor_email }}</p>
+                        </td>
+                        <td><strong>৳{{ number_format($transaction->amount, 2) }}</strong></td>
+                        <td>{{ $transaction->campaign_title ?? 'N/A' }}</td>
+                        <td>{{ ucfirst($transaction->payment_method) }}</td>
+                        <td><span class="status-pill status-{{ $transaction->status }}">{{ ucfirst($transaction->status) }}</span></td>
+                        <td><code style="font-size: 11px;">{{ substr($transaction->order_id, -8) }}</code></td>
+                    </tr>
+                @empty
+                    <tr><td colspan="7" class="empty-state">No transactions recorded yet.</td></tr>
                 @endforelse
                 </tbody>
             </table>

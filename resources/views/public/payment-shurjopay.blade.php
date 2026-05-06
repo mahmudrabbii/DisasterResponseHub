@@ -179,6 +179,13 @@
                 if (data.success && data.redirect_url) {
                     // Redirect to Shurjopay checkout
                     window.location.href = data.redirect_url;
+                    
+                    // After 10 seconds, show a message and redirect to status page
+                    // In case ShurjoPay doesn't redirect back
+                    setTimeout(() => {
+                        // Try to redirect to status page
+                        window.location.href = '{{ route("payment.shurjopay-status") }}';
+                    }, 10000);
                 } else {
                     showError(data.error || 'Failed to create payment session');
                     submitBtn.disabled = false;
