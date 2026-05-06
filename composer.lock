@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4189f79c7671a89e2a20f6b49b9e593c",
+    "content-hash": "6d75b8ec3b7892b0be2b2943e4276e3f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3311,6 +3311,64 @@
                 }
             ],
             "time": "2021-09-25T23:10:38+00:00"
+        },
+        {
+            "name": "shurjomukhi/shurjopay-plugin-php",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shurjopay-plugins/sp-plugin-php.git",
+                "reference": "c2e19b20b6bc409911f2bcbc92adb76aefa2c337"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shurjopay-plugins/sp-plugin-php/zipball/c2e19b20b6bc409911f2bcbc92adb76aefa2c337",
+                "reference": "c2e19b20b6bc409911f2bcbc92adb76aefa2c337",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ShurjopayPlugin\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shurjomukhi Plugin Devs",
+                    "email": "plugindev@shurjomukhi.com.bd"
+                },
+                {
+                    "name": "Md Wali Mosnad Ayshik",
+                    "email": "ayshik.wali@shurjomukhisolutions.com.bd",
+                    "role": "Software Engineer"
+                },
+                {
+                    "name": "Rayhan Khan Ridoy",
+                    "email": "redoy@shurjomukhisolutions.com.bd",
+                    "role": "Software Engineer"
+                }
+            ],
+            "description": "shurjoPay is a online payment gateway and easy payment solution",
+            "keywords": [
+                "codeigniter",
+                "laravel",
+                "payment-gateway",
+                "payments",
+                "php",
+                "shurjomukhi",
+                "shurjopay",
+                "shurjopay-plugin",
+                "symphony"
+            ],
+            "support": {
+                "issues": "https://github.com/shurjopay-plugins/sp-plugin-php/issues",
+                "source": "https://github.com/shurjopay-plugins/sp-plugin-php/tree/v0.1.1"
+            },
+            "time": "2023-01-27T13:15:08+00:00"
         },
         {
             "name": "stripe/stripe-php",

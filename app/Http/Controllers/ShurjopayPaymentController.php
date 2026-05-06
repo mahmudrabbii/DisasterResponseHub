@@ -56,44 +56,49 @@ class ShurjopayPaymentController extends Controller
         ]);
 
         try {
-            // Get token from Shurjopay
-            $tokenData = $this->shurjoPay->getToken();
+            $orderId = config('services.shurjopay.prefix') . '_' . uniqid();
 
-            \Log::info('Shurjopay Token Response:', $tokenData);
-
-            if (!isset($tokenData['token'])) {
-                return response()->json(['error' => 'Failed to generate payment token. Response: ' . json_encode($tokenData)], 500);
-            }
-
-            $token = $tokenData['token'];
-            $orderId = 'ORD-' . uniqid();
-
-            // Prepare payment data
+            // Prepare payment data using official plugin structure
             $paymentData = [
-                'prefix' => config('services.shurjopay.prefix'),
-                'return_url' => route('payment.shurjopay-verify'),
-                'cancel_url' => route('public.donate'),
-                'store_id' => $tokenData['store_id'] ?? config('services.shurjopay.store_id'),
                 'amount' => $validated['amount'],
-                'order_id' => $orderId,
                 'currency' => 'BDT',
                 'customer_name' => $validated['donor_name'],
-                'customer_address' => $validated['donor_phone'],
                 'customer_email' => $validated['donor_email'],
                 'customer_phone' => $validated['donor_phone'],
+                'customer_address' => $validated['donor_phone'],
                 'customer_city' => 'Dhaka',
-                'client_ip' => $request->ip(),
+                'customer_country' => 'Bangladesh',
+                'discount_amount' => 0,
+                'disc_percent' => 0,
+                // Custom fields for storing additional data
+                'value1' => json_encode([
+                    'campaign_id' => $validated['campaign_id'],
+                    'order_id' => $orderId,
+                ]),
             ];
 
-            \Log::info('Payment Data:', $paymentData);
+            \Log::info('Creating payment with data:', $paymentData);
 
-            // Create payment session with Shurjopay
-            $response = $this->shurjoPay->createPayment($paymentData, $token);
+            // Create payment session with Shurjopay using official plugin
+            try {
+                $response = $this->shurjoPay->createPayment($paymentData);
+            } catch (\Exception $e) {
+                \Log::error('ShurjoPay createPayment exception:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+                return response()->json(['error' => 'Payment service error: ' . $e->getMessage()], 500);
+            }
 
-            \Log::info('Shurjopay Payment Response:', $response);
+            \Log::info('Shurjopay Payment Response:', is_array($response) ? $response : (array) $response);
 
-            if (!isset($response['checkout_url']) && !isset($response['url'])) {
-                return response()->json(['error' => 'Failed to create payment session. Response: ' . json_encode($response)], 500);
+            // Check if response is valid
+            if (empty($response)) {
+                return response()->json(['error' => 'No response from payment gateway'], 500);
+            }
+
+            // Convert stdObject to array if needed
+            $response = is_object($response) ? (array) $response : $response;
+
+            if (isset($response['error'])) {
+                return response()->json(['error' => 'Failed to create payment session: ' . $response['error']], 500);
             }
 
             // Store transaction record
@@ -106,11 +111,17 @@ class ShurjopayPaymentController extends Controller
                 'donor_phone' => $validated['donor_phone'],
                 'status' => 'pending',
                 'payment_method' => 'shurjopay',
+                'payment_id' => null,
                 'created_at' => now(),
             ]);
 
-            // Get checkout URL from response
-            $checkoutUrl = $response['checkout_url'] ?? $response['url'] ?? null;
+            // Get checkout URL from response (check multiple possible response keys)
+            $checkoutUrl = $response['checkout_url'] ?? $response['url'] ?? $response['payment_url'] ?? null;
+
+            if (!$checkoutUrl) {
+                \Log::warning('No checkout URL in response', ['response' => $response]);
+                return response()->json(['error' => 'No checkout URL received from payment gateway'], 500);
+            }
 
             return response()->json([
                 'success' => true,
@@ -134,12 +145,8 @@ class ShurjopayPaymentController extends Controller
                 return redirect()->route('public.donate')->with('error', 'Invalid payment response');
             }
 
-            // Get token from Shurjopay
-            $tokenData = $this->shurjoPay->getToken();
-            $token = $tokenData['token'];
-
-            // Verify payment with Shurjopay
-            $verifyResponse = $this->shurjoPay->verifyPayment($orderId, $token);
+            // Verify payment with Shurjopay using official plugin (no token needed)
+            $verifyResponse = $this->shurjoPay->verifyPayment($orderId);
 
             // Update transaction status
             $transaction = DB::table('transactions')
@@ -150,12 +157,35 @@ class ShurjopayPaymentController extends Controller
                 return redirect()->route('public.donate')->with('error', 'Transaction not found');
             }
 
+            \Log::info('Payment Verification Response', ['response' => $verifyResponse, 'order_id' => $orderId]);
+
             // Check if payment was successful (sp_code 1000 means success)
-            if (isset($verifyResponse[0]['sp_code']) && $verifyResponse[0]['sp_code'] == 1000) {
+            $isSuccessful = false;
+            if (is_array($verifyResponse)) {
+                // Check if it's an array of responses
+                if (isset($verifyResponse[0]) && is_array($verifyResponse[0])) {
+                    $isSuccessful = isset($verifyResponse[0]['sp_code']) && $verifyResponse[0]['sp_code'] == 1000;
+                } else {
+                    // Single response object
+                    $isSuccessful = isset($verifyResponse['sp_code']) && $verifyResponse['sp_code'] == 1000;
+                }
+            }
+
+            if ($isSuccessful) {
                 // Update transaction as completed
                 DB::table('transactions')
                     ->where('order_id', $orderId)
-                    ->update(['status' => 'completed']);
+                    ->update([
+                        'status' => 'completed',
+                        'payment_id' => $orderId // Update payment_id with order_id for reference
+                    ]);
+
+                // Get campaign and donor info from transaction
+                $transaction = DB::table('transactions')
+                    ->where('order_id', $orderId)
+                    ->first();
+
+                    
 
                 // Create fundraising donation record
                 DB::table('fundraising')->insert([
@@ -186,6 +216,7 @@ class ShurjopayPaymentController extends Controller
                 return redirect()->route('public.donate')->with('error', 'Payment failed or was cancelled');
             }
         } catch (\Exception $e) {
+            \Log::error('Payment verification failed:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return redirect()->route('public.donate')->with('error', 'Payment verification failed: ' . $e->getMessage());
         }
     }
@@ -197,20 +228,33 @@ class ShurjopayPaymentController extends Controller
     {
         try {
             $orderId = $request->input('order_id');
-            $status = $request->input('status');
 
-            // Get token from Shurjopay
-            $tokenData = $this->shurjoPay->getToken();
-            $token = $tokenData['token'];
+            if (!$orderId) {
+                return response()->json(['error' => 'Missing order_id'], 400);
+            }
 
-            // Verify payment with Shurjopay
-            $verifyResponse = $this->shurjoPay->verifyPayment($orderId, $token);
+            // Verify payment with Shurjopay using official plugin (no token needed)
+            $verifyResponse = $this->shurjoPay->verifyPayment($orderId);
+
+            \Log::info('IPN Verification Response', ['order_id' => $orderId, 'response' => $verifyResponse]);
 
             // Check if payment was successful
-            if (isset($verifyResponse[0]['sp_code']) && $verifyResponse[0]['sp_code'] == 1000) {
+            $isSuccessful = false;
+            if (is_array($verifyResponse)) {
+                if (isset($verifyResponse[0]) && is_array($verifyResponse[0])) {
+                    $isSuccessful = isset($verifyResponse[0]['sp_code']) && $verifyResponse[0]['sp_code'] == 1000;
+                } else {
+                    $isSuccessful = isset($verifyResponse['sp_code']) && $verifyResponse['sp_code'] == 1000;
+                }
+            }
+
+            if ($isSuccessful) {
                 DB::table('transactions')
                     ->where('order_id', $orderId)
-                    ->update(['status' => 'completed']);
+                    ->update([
+                        'status' => 'completed',
+                        'payment_id' => $orderId
+                    ]);
             } else {
                 DB::table('transactions')
                     ->where('order_id', $orderId)
@@ -219,7 +263,8 @@ class ShurjopayPaymentController extends Controller
 
             return response()->json(['message' => 'IPN processed'], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'IPN processing failed'], 500);
+            \Log::error('IPN processing failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'IPN processing failed: ' . $e->getMessage()], 500);
         }
     }
 }

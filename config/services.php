@@ -40,11 +40,12 @@ return [
     ],
 
     'shurjopay' => [
-        'base_url' => env('SP_BASE_URL'),
+        'api_endpoint' => env('SHURJOPAY_API'),
         'username' => env('SP_USERNAME'),
         'password' => env('SP_PASSWORD'),
         'prefix' => env('SP_PREFIX'),
-        'store_id' => env('SP_STORE_ID'),
+        'callback_url' => env('SP_CALLBACK'),
+        'log_path' => env('SP_LOG_LOCATION', 'storage/logs'),
     ],
 
 ];
