@@ -49,7 +49,7 @@
                     @foreach ($campaigns as $campaign)
                         <div class="campaign-card">
                             <div class="card-image">
-                                <img src="{{ asset('images/background.jpg') }}" alt="{{ $campaign['title'] }}" onerror="this.style.display='none'">
+                                <img src="{{ asset('images/disaster.jpg') }}" alt="{{ $campaign['title'] }}" onerror="this.style.display='none'">
                                 <svg class="card-image-fallback" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice">
                                     <rect fill="#d1fae5" width="400" height="200"/>
                                     <circle cx="80" cy="40" r="25" fill="#0f766e" opacity="0.2"/>
@@ -58,13 +58,6 @@
                                     <text x="200" y="90" font-size="16" fill="#0f766e" text-anchor="middle" font-weight="bold">{{ $campaign['title'] }}</text>
                                     <text x="200" y="115" font-size="12" fill="#0f766e" text-anchor="middle" opacity="0.7">Disaster Relief Campaign</text>
                                 </svg>
-                                <div class="progress-badge">
-                                    @php
-                                        $percentage = ($campaign['current_amount'] / $campaign['target_amount']) * 100;
-                                        $percentage = min($percentage, 100);
-                                    @endphp
-                                    {{ number_format($percentage, 0) }}%
-                                </div>
                             </div>
 
                             <div class="card-top">

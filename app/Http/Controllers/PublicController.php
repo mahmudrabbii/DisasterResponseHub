@@ -197,18 +197,20 @@ class PublicController extends Controller
             ->distinct('f.disaster_id')
             ->get();
 
-        // For each campaign, calculate stats
+        // For each campaign, calculate stats from transactions table
         $campaignStats = [];
         foreach ($campaigns as $campaign) {
-            $totalRaised = DB::table('fundraising')
-                ->where('disaster_id', $campaign->disaster_id)
-                ->where('role', 'donor')
+            // Get raised amount from completed transactions for this specific campaign
+            $totalRaised = DB::table('transactions')
+                ->where('campaign_id', $campaign->id)
+                ->where('status', 'completed')
                 ->sum('amount');
 
-            $donorCount = DB::table('fundraising')
-                ->where('disaster_id', $campaign->disaster_id)
-                ->where('role', 'donor')
-                ->distinct('person_id')
+            // Get distinct donor count from completed transactions for this campaign
+            $donorCount = DB::table('transactions')
+                ->where('campaign_id', $campaign->id)
+                ->where('status', 'completed')
+                ->distinct('donor_email')
                 ->count();
 
             // Set a target amount (can be customized per campaign)
