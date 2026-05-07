@@ -70,8 +70,13 @@
             <!-- Receipt Information -->
             <section class="receipt-section">
                 <h2>Receipt & Confirmation</h2>
+                <!--
                 <p>A detailed receipt has been sent to <strong>{{ $transaction->donor_email }}</strong></p>
+                -->
+                <p>A detailed receipt can be download from below</strong></p>
+                <!--
                 <p class="receipt-note">Please check your inbox for the official receipt. If you don't receive it within a few minutes, please check your spam folder.</p>
+                -->
                 <button class="print-btn" onclick="window.print()">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -93,7 +98,7 @@
 
             <!-- Gratitude Message -->
             <div class="gratitude">
-                <p>🙏 Thank you for being a beacon of hope for disaster-affected communities!</p>
+                <p>🙏 Thank you for being a the hope for disaster-affected communities!</p>
             </div>
         </div>
     </div>

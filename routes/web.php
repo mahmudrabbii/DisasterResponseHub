@@ -35,17 +35,6 @@ Route::prefix('/payment/shurjopay')->group(function () {
     Route::post('/ipn', [ShurjopayPaymentController::class, 'handleIPN'])->name('payment.shurjopay-ipn');
     Route::match(['get', 'post'], '/status/{orderId?}', [ShurjopayPaymentController::class, 'checkPaymentStatus'])->name('payment.shurjopay-status');
     Route::get('/confirmation/{orderId}', [ShurjopayPaymentController::class, 'showConfirmation'])->name('payment.confirmation');
-    // Test endpoint to manually verify a payment
-    Route::get('/test-verify/{orderId}', function($orderId) {
-        return redirect()->route('payment.shurjopay-verify', ['order_id' => $orderId]);
-    })->name('payment.test-verify');
-    // Debug endpoint to check if route is working
-    Route::get('/test-route', function() {
-        return response()->json([
-            'message' => 'Shurjopay routes are working',
-            'timestamp' => now(),
-        ]);
-    })->name('payment.test-route');
     // Generic route last (catch-all)
     Route::get('/{campaignId}', [ShurjopayPaymentController::class, 'showPaymentForm'])->name('payment.shurjopay-form');
 });
@@ -174,9 +163,3 @@ Route::get('/volunteer/disaster-submissions/{submissionId}', [VolunteerControlle
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
-
-
-
-Route::get('/pay', [PaymentController::class, 'pay']);
-Route::get('/payment/response', [PaymentController::class, 'response']);
-Route::get('/payment/cancel', [PaymentController::class, 'cancel']);
