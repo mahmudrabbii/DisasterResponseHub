@@ -2,8 +2,7 @@
 
 @section('title', 'Checkout - Disaster Response Hub')
 
-@section('content')
-    <div class="payment-container">
+@section('content')    <link rel="stylesheet" href="{{ asset('css/payment.css') }}">    <div class="payment-container">
         <div class="payment-card">
             <h2>Complete Your Donation</h2>
             <p>Campaign: <strong>{{ $campaign->title ?? 'Disaster Relief' }}</strong></p>
@@ -51,84 +50,6 @@
             <p class="payment-note">💡 This is a secure payment. Your card information is encrypted.</p>
         </div>
     </div>
-
-    <style>
-        .payment-container {
-            max-width: 500px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-
-        .payment-card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        #card-element {
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 10px;
-            background: white;
-        }
-
-        #card-errors {
-            color: #fa755a;
-            margin-top: 5px;
-        }
-
-        .primary-btn {
-            width: 100%;
-            padding: 12px;
-            background: #0f766e;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .primary-btn:hover {
-            background: #0d5f5d;
-        }
-
-        .primary-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .hidden { display: none; }
-
-        .payment-note {
-            color: #666;
-            font-size: 12px;
-            margin-top: 20px;
-            text-align: center;
-        }
-    </style>
 
     <script src="https://js.stripe.com/v3/"></script>
     <script>

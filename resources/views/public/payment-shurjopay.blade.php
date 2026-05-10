@@ -3,6 +3,8 @@
 @section('title', 'Checkout - Disaster Response Hub')
 
 @section('content')
+    <link rel="stylesheet" href="{{ asset('css/payment-shurjopay.css') }}">
+    
     <div class="payment-container">
         <div class="payment-card">
             <h2>Complete Your Donation</h2>
@@ -46,100 +48,25 @@
                 </form>
             </div>
 
-            <p class="payment-note">💡 You'll be redirected to Shurjopay to complete your payment securely.</p>
+            <p class="payment-note">💡 You'll be redirected to shurjoPay to complete your payment securely.</p>
+
+            <!-- Payment Gateway Logo Section -->
+            <div class="payment-gateway-section">
+                <!--
+                <div class="gateway-divider"></div>
+                -->
+                <p class="gateway-text">Secure Payment Powered By</p>
+                <div class="payment-logo-container">
+                    <img src="{{ asset('images/shurjoPay.jpg') }}" alt="ShurjoPay Payment Gateway" class="shurjopay-logo">
+                </div>
+<!--
+                <p class="security-badge">
+                    🔒 Bank-Level Encryption | PCI-DSS Compliant | 100% Secure
+                </p>
+            -->
+            </div>
         </div>
     </div>
-
-    <style>
-        .payment-container {
-            max-width: 500px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-
-        .payment-card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #0f766e;
-            box-shadow: 0 0 5px rgba(15, 118, 110, 0.3);
-        }
-
-        .primary-btn {
-            width: 100%;
-            padding: 12px;
-            background: #0f766e;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .primary-btn:hover {
-            background: #0d5f5d;
-        }
-
-        .primary-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .hidden { display: none; }
-
-        .payment-note {
-            color: #666;
-            font-size: 12px;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .error-message {
-            color: #dc2626;
-            padding: 10px;
-            background: #fee2e2;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        .success-message {
-            color: #059669;
-            padding: 10px;
-            background: #d1fae5;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            display: none;
-        }
-    </style>
 
     <script>
         // Handle form submission

@@ -4,6 +4,10 @@
 @section('page-title', 'Volunteer Disaster Records')
 @section('page-subtitle', 'Review incident reports, assessments, and data submitted by volunteers.')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/volunteer-submissions.css') }}">
+@endpush
+
 @section('content')
     <section class="panel-card full-width">
         <div class="panel-header">
@@ -50,16 +54,4 @@
             </table>
         </div>
     </section>
-
-    <style>
-        .submission-type-pill {
-            display: inline-block;
-            padding: 4px 8px;
-            background-color: #e8f4f8;
-            color: #0066cc;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
-    </style>
 @endsection

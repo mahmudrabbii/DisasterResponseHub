@@ -4,6 +4,10 @@
 @section('page-title', 'Report a Disaster')
 @section('page-subtitle', 'Submit details about the disaster you witnessed')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/report-disaster.css') }}">
+@endpush
+
 @section('content')
     <section class="panel-card form-card">
         <div class="panel-header">
@@ -93,13 +97,4 @@
             </div>
         </form>
     </section>
-
-    <style>
-        .error-text {
-            color: var(--danger);
-            font-size: 0.85rem;
-            margin-top: 4px;
-            display: block;
-        }
-    </style>
 @endsection

@@ -1,0 +1,143 @@
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    align-items: end;
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+    grid-column: 1 / -1;
+}
+
+.primary-action,
+.secondary-action {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.primary-action {
+    background: #0f766e;
+    color: white;
+}
+
+.primary-action:hover {
+    background: #0d5f5d;
+}
+
+.secondary-action {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+.secondary-action:hover {
+    background: #d1d5db;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pill.status-completed {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.status-pill.status-pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.status-pill.status-failed {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.status-pill.status-refunded {
+    background: #e0e7ff;
+    color: #4f46e5;
+}
+
+.action-link {
+    color: #0f766e;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead tr {
+    background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 14px;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+    color: #374151;
+}
+
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+.pagination-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 4px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+}
+
+.muted {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+code {
+    background: #f3f4f6;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-family: 'Courier New', monospace;
+}

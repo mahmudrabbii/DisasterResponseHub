@@ -1,0 +1,6 @@
+.error-text {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: block;
+}

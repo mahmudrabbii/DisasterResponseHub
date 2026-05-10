@@ -4,6 +4,10 @@
 @section('page-title', 'Donation Management')
 @section('page-subtitle', 'Create and manage fundraising campaigns.')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin-donations.css') }}">
+@endpush
+
 @section('content')
     @php
         $editingDonation = null;
@@ -115,18 +119,4 @@
             </table>
         </div>
     </section>
-
-    <style>
-        .required {
-            color: #dc2626;
-            font-weight: 600;
-        }
-
-        .form-group small {
-            display: block;
-            margin-top: 4px;
-            color: #6b7280;
-            font-size: 12px;
-        }
-    </style>
 @endsection

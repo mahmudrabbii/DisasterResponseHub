@@ -1,0 +1,11 @@
+.required {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 4px;
+    color: #6b7280;
+    font-size: 12px;
+}

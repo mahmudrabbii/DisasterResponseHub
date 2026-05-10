@@ -1,0 +1,9 @@
+.submission-type-pill {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #e8f4f8;
+    color: #0066cc;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
