@@ -94,7 +94,7 @@ class PublicController extends Controller
     public function requestHelp()
     {
         $locations = DB::table('locations')->orderBy('city')->get();
-        $aidTypes = DB::table('aid_types')->orderBy('name')->get();
+        $aidTypes = DB::table('aid_types')->distinct('id')->orderBy('name')->get();
 
         return view('public.request-help', [
             'locations' => $locations,

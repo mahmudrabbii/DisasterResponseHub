@@ -1,0 +1,263 @@
+/* ===========================
+   NOTIFICATIONS STYLING
+   =========================== */
+
+:root {
+    --notification-success-bg: #ecfdf5;
+    --notification-success-border: #10b981;
+    --notification-success-text: #065f46;
+    --notification-success-icon: #10b981;
+    
+    --notification-error-bg: #fef2f2;
+    --notification-error-border: #ef4444;
+    --notification-error-text: #7f1d1d;
+    --notification-error-icon: #ef4444;
+    
+    --notification-warning-bg: #fffbeb;
+    --notification-warning-border: #f59e0b;
+    --notification-warning-text: #78350f;
+    --notification-warning-icon: #f59e0b;
+    
+    --notification-info-bg: #eff6ff;
+    --notification-info-border: #3b82f6;
+    --notification-info-text: #1e40af;
+    --notification-info-icon: #3b82f6;
+}
+
+/* Status Banner - Success Messages */
+.status-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    background-color: var(--notification-success-bg);
+    border: 1px solid var(--notification-success-border);
+    border-radius: 8px;
+    color: var(--notification-success-text);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+    position: relative;
+}
+
+.status-banner::before {
+    content: "✓";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    background-color: var(--notification-success-icon);
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* Error Panel - Validation Errors */
+.error-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    background-color: var(--notification-error-bg);
+    border: 1px solid var(--notification-error-border);
+    border-radius: 8px;
+    color: var(--notification-error-text);
+    font-size: 0.95rem;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+}
+
+.error-panel::before {
+    content: "⚠";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    background-color: var(--notification-error-icon);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.error-panel div {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.error-panel div::before {
+    content: "•";
+    color: var(--notification-error-icon);
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+/* Alerts Section - Alert Cards */
+.alerts-section {
+    margin-bottom: 28px;
+}
+
+.alerts-title {
+    margin: 0 0 16px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alerts-title::before {
+    content: "🔔";
+    font-size: 1.3rem;
+}
+
+.alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.alert-card {
+    padding: 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid var(--notification-info-border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.4s ease-out;
+}
+
+.alert-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    border-left-color: #0f766e;
+}
+
+.alert-card h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alert-card h4::before {
+    content: "ℹ";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background-color: var(--notification-info-border);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.alert-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.alert-time {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+/* Animation for notifications */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Close button for notifications (optional) */
+.notification-close {
+    align-self: flex-start;
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    padding: 0;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .alerts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .status-banner,
+    .error-panel {
+        font-size: 0.9rem;
+        padding: 12px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .alerts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .status-banner,
+    .error-panel {
+        font-size: 0.85rem;
+        padding: 10px 12px;
+    }
+    
+    .alert-card {
+        padding: 12px;
+    }
+    
+    .alert-card h4 {
+        font-size: 0.95rem;
+    }
+    
+    .alert-card p {
+        font-size: 0.85rem;
+    }
+}

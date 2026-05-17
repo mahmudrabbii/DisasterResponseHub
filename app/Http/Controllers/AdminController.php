@@ -691,7 +691,7 @@ class AdminController extends Controller
             });
 
         $people = DB::table('people')->orderBy('name')->get();
-        $aidTypes = DB::table('aid_types')->orderBy('name')->get();
+        $aidTypes = DB::table('aid_types')->distinct('id')->orderBy('name')->get();
         $locations = DB::table('locations')->orderBy('city')->get();
 
         return view('admin.aid-requests', array_merge([

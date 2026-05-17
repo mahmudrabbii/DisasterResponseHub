@@ -7,6 +7,7 @@
     <title>@yield('title', 'NGO Official - DisasterResponseHub')</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/DRH Logo.png') }}">
     <link rel="stylesheet" href="{{ asset('css/official.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/notifications.css') }}">
 </head>
 <body>
 <div class="admin-shell" data-admin-shell>
@@ -26,7 +27,7 @@
             <a class="nav-link {{ ($activePage ?? '') === 'dashboard' ? 'active' : '' }}" href="{{ route('official.dashboard') }}">Dashboard</a>
             <a class="nav-link {{ ($activePage ?? '') === 'disasters' ? 'active' : '' }}" href="{{ route('official.disasters') }}">Disaster Handling</a>
             <a class="nav-link {{ ($activePage ?? '') === 'donations' ? 'active' : '' }}" href="{{ route('official.donations') }}">Donations</a>
-            <a class="nav-link {{ ($activePage ?? '') === 'transactions' ? 'active' : '' }}" href="{{ route('admin.transactions') }}">Transaction History</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'transactions' ? 'active' : '' }}" href="{{ route('official.transactions') }}">Transaction History</a>
             <a class="nav-link {{ ($activePage ?? '') === 'volunteers' ? 'active' : '' }}" href="{{ route('official.volunteers') }}">Volunteer Coordination</a>
             <a class="nav-link {{ ($activePage ?? '') === 'volunteer-submissions' ? 'active' : '' }}" href="{{ route('official.volunteer-submissions') }}">Volunteer Records</a>
             <a class="nav-link {{ ($activePage ?? '') === 'resources' ? 'active' : '' }}" href="{{ route('official.resources') }}">Resource Handling</a>
@@ -57,11 +58,13 @@
 
         <main class="content">
             @if (session('status'))
-                <div class="status-banner">{{ session('status') }}</div>
+                <div class="status-banner" role="alert">
+                    {{ session('status') }}
+                </div>
             @endif
 
             @if ($errors->any())
-                <div class="error-panel">
+                <div class="error-panel" role="alert">
                     @foreach ($errors->all() as $error)
                         <div>{{ $error }}</div>
                     @endforeach
@@ -69,15 +72,19 @@
             @endif
 
             @if (!empty($alerts) && count($alerts) > 0)
-                <div class="panel-card full-width">
-                    <div class="panel-header">
-                        <h3>Recent alerts</h3>
-                        <span class="muted">Alerts are shown to the volunteers and rescue team</span>
-                    </div>
-
+                <section class="alerts-section" role="region" aria-label="Recent Alerts">
+                    <h3 class="alerts-title">Recent Alerts</h3>
                     <div class="alerts-grid">
                         @foreach ($alerts as $alert)
-                            <div class="alert-card">
+                            <article class="alert-card" role="article">
+                                <h4>{{ $alert->title }}</h4>
+                                <p>{{ $alert->message }}</p>
+                                <time class="alert-time">{{ $alert->created_at }}</time>
+                            </article>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
                                 <h4>{{ $alert->title }}</h4>
                                 <p>{{ $alert->message }}</p>
                                 <span class="alert-time">{{ $alert->created_at }}</span>

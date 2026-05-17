@@ -141,6 +141,8 @@ Route::post('/official/donations', [OfficialController::class, 'storeDonation'])
 Route::patch('/official/donations/{donationId}', [OfficialController::class, 'updateDonation'])->name('official.donations.update');
 Route::delete('/official/donations/{donationId}', [OfficialController::class, 'destroyDonation'])->name('official.donations.destroy');
 
+Route::get('/official/transactions', [OfficialController::class, 'transactions'])->name('official.transactions');
+
 Route::get('/official/public-disaster-reports', [OfficialController::class, 'publicDisasterReports'])->name('official.public-disaster-reports');
 Route::get('/official/public-disaster-reports/{reportId}', [OfficialController::class, 'reviewDisasterReport'])->name('official.public-disaster-reports.show');
 Route::get('/official/public-help-requests', [OfficialController::class, 'publicHelpRequests'])->name('official.public-help-requests');

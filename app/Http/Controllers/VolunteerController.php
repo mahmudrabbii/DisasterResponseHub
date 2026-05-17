@@ -127,7 +127,7 @@ class VolunteerController extends Controller
                 ->get()
                 ->groupBy('disaster_id');
 
-        $aidTypes = DB::table('aid_types')->orderBy('name')->get();
+        $aidTypes = DB::table('aid_types')->distinct('id')->orderBy('name')->get();
         $locations = DB::table('locations')->orderBy('city')->get();
 
         $alerts = DB::table('alerts')

@@ -32,7 +32,7 @@
                     <option value="">Select Person</option>
                     @foreach ($people as $person)
                         <option value="{{ $person->id }}" 
-                            @selected(old('person_id', $editingDonation->person_id ?? '') == $person->id)
+                            @selected(old('person_id')
                         >{{ $person->name }}</option>
                     @endforeach
                 </select>
@@ -47,7 +47,7 @@
                     <option value="">Select Disaster</option>
                     @foreach ($disasters as $disaster)
                         <option value="{{ $disaster->id }}" 
-                            @selected(old('disaster_id', $editingDonation->disaster_id ?? '') == $disaster->id)
+                            @selected(old('disaster_id')
                         >{{ $disaster->type }}</option>
                     @endforeach
                 </select>
@@ -70,8 +70,8 @@
                 <label for="role">Role Type</label>
                 <select id="role" name="role" required>
                     <option value="">Select Role</option>
-                    <option value="donor" @selected(old('role', $editingDonation->role ?? '') === 'donor')>Donor</option>
-                    <option value="organizer" @selected(old('role', $editingDonation->role ?? '') === 'organizer')>Campaign Organizer</option>
+                    <option value="donor" @selected(old('role')>Donor</option>
+                    <option value="organizer" @selected(old('role')>Campaign Organizer</option>
                 </select>
             </div>
 
@@ -79,8 +79,8 @@
                 <label for="status">Status</label>
                 <select id="status" name="status" required>
                     <option value="">Select Status</option>
-                    <option value="active" @selected(old('status', $editingDonation->status ?? '') === 'active')>Active</option>
-                    <option value="completed" @selected(old('status', $editingDonation->status ?? '') === 'completed')>Completed</option>
+                    <option value="active" @selected(old('status')>Active</option>
+                    <option value="completed" @selected(old('status')>Completed</option>
                 </select>
             </div>
 

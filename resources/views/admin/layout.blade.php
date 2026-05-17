@@ -7,6 +7,7 @@
     <title>@yield('title', 'Admin - DisasterResponseHub')</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/DRH Logo.png') }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/notifications.css') }}">
 </head>
 <body>
 <div class="admin-shell" data-admin-shell>
@@ -61,11 +62,13 @@
 
         <main class="content">
             @if (session('status'))
-                <div class="status-banner">{{ session('status') }}</div>
+                <div class="status-banner" role="alert">
+                    {{ session('status') }}
+                </div>
             @endif
 
             @if ($errors->any())
-                <div class="error-panel">
+                <div class="error-panel" role="alert">
                     @foreach ($errors->all() as $error)
                         <div>{{ $error }}</div>
                     @endforeach

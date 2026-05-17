@@ -7,6 +7,7 @@
 	<title>@yield('title', 'Volunteer Hub - DisasterResponseHub')</title>
 	<link rel="icon" type="image/png" href="{{ asset('assets/DRH Logo.png') }}">
 	<link rel="stylesheet" href="{{ asset('css/volunteer.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/notifications.css') }}">
 </head>
 <body>
 <div class="volunteer-shell" data-volunteer-shell>
@@ -54,11 +55,13 @@
 
 		<main class="content">
 			@if (session('status'))
-				<div class="status-banner">{{ session('status') }}</div>
+				<div class="status-banner" role="alert">
+					{{ session('status') }}
+				</div>
 			@endif
 
 			@if ($errors->any())
-				<div class="error-panel">
+				<div class="error-panel" role="alert">
 					@foreach ($errors->all() as $error)
 						<div>{{ $error }}</div>
 					@endforeach
@@ -66,18 +69,18 @@
 			@endif
 
 			@if (!empty($alerts) && count($alerts) > 0)
-				<div class="alerts-section">
+				<section class="alerts-section" role="region" aria-label="Recent Alerts">
 					<h3 class="alerts-title">Recent Alerts</h3>
 					<div class="alerts-grid">
 						@foreach ($alerts as $alert)
-							<div class="alert-card">
+							<article class="alert-card" role="article">
 								<h4>{{ $alert->title }}</h4>
 								<p>{{ $alert->message }}</p>
-								<span class="alert-time">{{ $alert->created_at }}</span>
-							</div>
+								<time class="alert-time">{{ $alert->created_at }}</time>
+							</article>
 						@endforeach
 					</div>
-				</div>
+				</section>
 			@endif
 
 			@yield('content')

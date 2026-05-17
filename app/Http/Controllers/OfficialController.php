@@ -799,4 +799,50 @@ class OfficialController extends Controller
 
         return redirect()->route('official.donations')->with('status', 'Donation record deleted successfully.');
     }
+
+    public function transactions(Request $request)
+    {
+        $query = DB::table('transactions as t')
+            ->leftJoin('fundraising as f', 't.campaign_id', '=', 'f.id')
+            ->orderByDesc('t.created_at')
+            ->select(
+                't.id',
+                't.order_id',
+                't.donor_name',
+                't.donor_email',
+                't.donor_phone',
+                't.amount',
+                't.payment_method',
+                't.status',
+                't.created_at',
+                't.updated_at',
+                'f.id as campaign_id',
+                'f.title as campaign_title'
+            );
+
+        // Filter by status if provided
+        if ($request->filled('status')) {
+            $query->where('t.status', $request->get('status'));
+        }
+
+        // Filter by payment method if provided
+        if ($request->filled('method')) {
+            $query->where('t.payment_method', $request->get('method'));
+        }
+
+        // Search by donor name or email
+        if ($request->filled('search')) {
+            $search = '%' . $request->get('search') . '%';
+            $query->where(function($q) use ($search) {
+                $q->where('t.donor_name', 'like', $search)
+                  ->orWhere('t.donor_email', 'like', $search);
+            });
+        }
+
+        $transactions = $query->paginate(25);
+
+        return view('official.transactions', array_merge($this->layoutData('transactions'), [
+            'transactions' => $transactions,
+        ]));
+    }
 }
