@@ -102,7 +102,7 @@
                         <td>{{ $request->disaster_type }}<div class="muted">{{ $request->city ?? 'Unknown city' }}</div></td>
                         <td>{{ $request->resource_name }}</td>
                         <td>{{ $request->quantity_requested }}</td>
-                        <td><span class="status-pill status-{{ $request->status }}">{{ $request->status }}</span></td>
+                        <td><span class="status-pill status-{{ $request->status }}">{{ ucfirst(str_replace('_', ' ', $request->status)) }}</span></td>
                     </tr>
                 @empty
                     <tr><td colspan="4" class="empty-state">No resource requests recorded yet.</td></tr>

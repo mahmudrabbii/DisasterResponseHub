@@ -59,7 +59,7 @@
                             <strong>{{ $request->aid_type ?? 'Aid request' }}</strong>
                             <p>{{ $request->city ?? 'Unknown city' }}, {{ $request->district ?? 'Unknown district' }}</p>
                         </div>
-                        <span class="status-pill status-{{ $request->status }}">{{ $request->status }}</span>
+                        <span class="status-pill status-{{ $request->status }}">{{ str_replace('_', ' ', ucfirst($request->status)) }}</span>
                     </div>
                     <p>{{ $request->description }}</p>
                     <small>{{ $request->created_at }}</small>

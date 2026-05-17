@@ -77,7 +77,7 @@
                         <p>{{ $request->city ?? 'Unknown city' }}, {{ $request->district ?? 'Unknown district' }}</p>
                     </div>
                     <div class="row-meta">
-                        <span class="status-pill status-{{ $request->status }}">{{ $request->status }}</span>
+                        <span class="status-pill status-{{ $request->status }}">{{ ucfirst(str_replace('_', ' ', $request->status)) }}</span>
                     </div>
                 </div>
             @empty
@@ -110,7 +110,7 @@
                             <div class="muted">{{ $disaster->disaster_date }}</div>
                         </td>
                         <td>{{ $disaster->city ?? 'Unknown' }}, {{ $disaster->district ?? 'Unknown' }}</td>
-                        <td><span class="status-pill status-{{ $disaster->status }}">{{ $disaster->status }}</span></td>
+                        <td><span class="status-pill status-{{ $disaster->status }}">{{ ucfirst(str_replace('_', ' ', $disaster->status)) }}</span></td>
                         <td>{{ $disasterIncidentCounts[$disaster->id] ?? 0 }}</td>
                     </tr>
                 @empty

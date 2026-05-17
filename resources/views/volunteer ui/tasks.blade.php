@@ -14,7 +14,7 @@
                         <h3>{{ $task->disaster_type }}</h3>
                         <p class="task-location">{{ $task->city ?? 'Unknown city' }}, {{ $task->district ?? 'Unknown district' }}</p>
                     </div>
-                    <span class="status-pill status-{{ $task->disaster_status }}">{{ $task->disaster_status }}</span>
+                    <span class="status-pill status-{{ $task->disaster_status }}">{{ ucfirst(str_replace('_', ' ', $task->disaster_status)) }}</span>
                 </div>
 
                 <div class="task-summary-line">

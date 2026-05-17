@@ -98,7 +98,7 @@
                         <td>{{ $disaster->type }}</td>
                         <td>{{ $disaster->city ?? 'N/A' }}, {{ $disaster->district ?? 'N/A' }}</td>
                         <td>{{ $disaster->disaster_date }}</td>
-                        <td><span class="status-pill status-{{ $disaster->status }}">{{ $disaster->status }}</span></td>
+                        <td><span class="status-pill status-{{ $disaster->status }}">{{ ucfirst(str_replace('_', ' ', $disaster->status)) }}</span></td>
                         <td>{{ number_format($disaster->affected_population) }}</td>
                         <td class="actions-cell">
                             <a class="action-link" href="{{ route('admin.disasters', ['edit' => $disaster->id]) }}">Edit</a>

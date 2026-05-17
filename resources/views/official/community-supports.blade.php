@@ -95,7 +95,7 @@
                             <td>{{ $support->name }}</td>
                             <td>{{ $support->disaster_type }}</td>
                             <td>{{ $support->city ?? 'N/A' }}, {{ $support->district ?? 'N/A' }}</td>
-                            <td><span class="status-pill status-{{ $support->support_status }}">{{ $support->support_status }}</span></td>
+                            <td><span class="status-pill status-{{ $support->support_status }}">{{ ucfirst(str_replace('_', ' ', $support->support_status)) }}</span></td>
                             <td>
                                 <a href="{{ route('official.community-supports') }}?edit={{ $support->beneficiary_id }}" class="action-link">Edit</a>
                             </td>

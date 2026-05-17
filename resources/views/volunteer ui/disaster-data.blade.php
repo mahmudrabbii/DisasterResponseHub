@@ -33,7 +33,7 @@
                         <h3>{{ $disaster->type }}</h3>
                         <p>{{ $disaster->city ?? 'Unknown city' }}, {{ $disaster->district ?? 'Unknown district' }}</p>
                     </div>
-                    <span class="status-pill status-{{ $disaster->status }}">{{ $disaster->status }}</span>
+                    <span class="status-pill status-{{ $disaster->status }}">{{ str_replace('_', ' ', ucfirst($disaster->status)) }}</span>
                 </div>
 
                 <div class="task-meta-grid">

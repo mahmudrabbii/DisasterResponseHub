@@ -101,7 +101,7 @@
                         <td><strong>{{ $donation->title }}</strong></td>
                         <td>{{ $donation->disaster_type ?? 'N/A' }}</td>
                         <td>৳{{ number_format($donation->amount, 0) }}</td>
-                        <td><span class="status-pill status-{{ $donation->status }}">{{ ucfirst($donation->status) }}</span></td>
+                        <td><span class="status-pill status-{{ $donation->status }}">{{ ucfirst(str_replace('_', ' ', $donation->status)) }}</span></td>
                         <td>{{ \Carbon\Carbon::parse($donation->created_at)->format('M d, Y') }}</td>
                         <td class="actions-cell">
                             <a class="action-link" href="{{ route('admin.donations', ['edit' => $donation->id]) }}">Edit</a>

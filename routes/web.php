@@ -18,17 +18,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Public routes (no authentication required)
 Route::get('/', [PublicController::class, 'index'])->name('public.home');
-Route::get('/report-disaster', [PublicController::class, 'reportDisaster'])->name('public.report-disaster');
-Route::post('/report-disaster', [PublicController::class, 'storeDisasterReport'])->name('public.report-disaster.store');
-Route::get('/request-help', [PublicController::class, 'requestHelp'])->name('public.request-help');
-Route::post('/request-help', [PublicController::class, 'storeHelpRequest'])->name('public.request-help.store');
-Route::get('/alerts', [PublicController::class, 'viewAlerts'])->name('public.alerts');
-Route::get('/disasters', [PublicController::class, 'viewDisasters'])->name('public.disasters');
-Route::get('/donate', [PublicController::class, 'donate'])->name('public.donate');
 
-// Shurjopay Payment Gateway Routes
-Route::prefix('/payment/shurjopay')->group(function () {
+// Protected public routes (authentication required)
+Route::middleware('auth')->group(function () {
+    Route::get('/report-disaster', [PublicController::class, 'reportDisaster'])->name('public.report-disaster');
+    Route::post('/report-disaster', [PublicController::class, 'storeDisasterReport'])->name('public.report-disaster.store');
+    Route::get('/request-help', [PublicController::class, 'requestHelp'])->name('public.request-help');
+    Route::post('/request-help', [PublicController::class, 'storeHelpRequest'])->name('public.request-help.store');
+    Route::get('/alerts', [PublicController::class, 'viewAlerts'])->name('public.alerts');
+    Route::get('/disasters', [PublicController::class, 'viewDisasters'])->name('public.disasters');
+    Route::get('/donate', [PublicController::class, 'donate'])->name('public.donate');
+});
+
+// Shurjopay Payment Gateway Routes (requires authentication)
+Route::middleware('auth')->prefix('/payment/shurjopay')->group(function () {
     // Specific routes first (more specific before generic)
     Route::post('/create', [ShurjopayPaymentController::class, 'createPaymentSession'])->name('payment.shurjopay-create');
     Route::match(['get', 'post'], '/verify', [ShurjopayPaymentController::class, 'verifyPayment'])->name('payment.shurjopay-verify');
@@ -64,10 +69,12 @@ Route::get('/dashboard', function () {
     }
 
     return view('dashboard');
-})->name('dashboard');
+})->name('dashboard')->middleware('auth');
 
-Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-Route::get('/admin/weather', [AdminController::class, 'weather'])->name('admin.weather');
+// Admin Routes (requires authentication)
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/weather', [AdminController::class, 'weather'])->name('admin.weather');
 
 Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
 Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
@@ -162,6 +169,5 @@ Route::get('/volunteer/disaster-submissions/create', [VolunteerController::class
 Route::post('/volunteer/disaster-submissions', [VolunteerController::class, 'storeDisasterSubmission'])->name('volunteer.disaster-submissions.store');
 Route::get('/volunteer/disaster-submissions/{submissionId}', [VolunteerController::class, 'showDisasterSubmissionDetail'])->name('volunteer.disaster-submissions.show');
 
-Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

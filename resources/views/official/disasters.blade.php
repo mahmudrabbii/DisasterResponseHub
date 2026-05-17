@@ -33,7 +33,7 @@
                         <td>{{ $disaster->city ?? 'Unknown' }}, {{ $disaster->district ?? 'Unknown' }}</td>
                         <td>{{ number_format($disaster->affected_population ?? 0) }}</td>
                         <td>{{ \Carbon\Carbon::parse($disaster->disaster_date)->format('M d, Y') }}</td>
-                        <td><span class="status-pill status-{{ $disaster->status }}">{{ $disaster->status }}</span></td>
+                        <td><span class="status-pill status-{{ $disaster->status }}">{{ ucfirst(str_replace('_', ' ', $disaster->status)) }}</span></td>
                         <td>
                             <form method="POST" action="{{ route('official.disasters.update-status', $disaster->id) }}" class="inline-form">
                                 @csrf

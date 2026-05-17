@@ -131,7 +131,7 @@
                         <strong>{{ $disaster->type }}</strong>
                         <p>{{ $disaster->city ?? 'Unknown city' }}, {{ $disaster->district ?? 'Unknown district' }}</p>
                     </div>
-                    <span class="status-pill status-{{ $disaster->status }}">{{ $disaster->status }}</span>
+                    <span class="status-pill status-{{ $disaster->status }}">{{ str_replace('_', ' ', ucfirst($disaster->status)) }}</span>
                 </div>
             @empty
                 <p class="empty-state">No disasters recorded yet.</p>

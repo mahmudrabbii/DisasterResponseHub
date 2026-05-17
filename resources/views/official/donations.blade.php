@@ -118,7 +118,7 @@
                         <td>{{ $donation->disaster_type ?? 'N/A' }}</td>
                         <td>{{ number_format($donation->amount, 2) }}</td>
                         <td><span class="status-pill status-{{ $donation->role }}">{{ $donation->role }}</span></td>
-                        <td><span class="status-pill status-{{ $donation->status }}">{{ $donation->status }}</span></td>
+                        <td><span class="status-pill status-{{ $donation->status }}">{{ ucfirst(str_replace('_', ' ', $donation->status)) }}</span></td>
                         <td>{{ $donation->created_at }}</td>
                         <td class="actions-cell">
                             <a class="action-link" href="{{ route('official.donations', ['edit' => $donation->id]) }}">Edit</a>

@@ -59,7 +59,7 @@
                             </td>
                             <td>{{ $disaster->city ?? 'Unknown' }}, {{ $disaster->district ?? 'Unknown' }}</td>
                             <td>{{ number_format($disaster->affected_population ?? 0) }}</td>
-                            <td><span class="status-pill status-{{ $disaster->status }}">{{ ucfirst($disaster->status) }}</span></td>
+                            <td><span class="status-pill status-{{ $disaster->status }}">{{ ucfirst(str_replace('_', ' ', $disaster->status)) }}</span></td>
                         </tr>
                     @endforeach
                     </tbody>
