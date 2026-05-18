@@ -70,6 +70,39 @@
                     <a href="{{ route('public.donate') }}" class="primary-btn">Return to Donations</a>
                 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
                 <!-- Auto-refresh every 3 seconds -->
                 <script>
                     setTimeout(() => {

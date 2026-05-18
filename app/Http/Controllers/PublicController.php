@@ -108,24 +108,44 @@ class PublicController extends Controller
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:100'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'location_id' => ['required', 'exists:locations,id'],
+            'location_id' => ['required', 'string', 'max:255'],
             'aid_type_ids' => ['required', 'array', 'min:1'],
             'aid_type_ids.*' => ['exists:aid_types,id'],
             'description' => ['required', 'string', 'max:1000'],
         ]);
 
-        // Create or find person
-        $personId = DB::table('people')->insertGetId([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'] ?? null,
-            'created_at' => now(),
-        ]);
+        // Create or find person by email
+        $person = DB::table('people')->where('email', $validated['email'])->first();
+        
+        if ($person) {
+            $personId = $person->id;
+        } else {
+            $personId = DB::table('people')->insertGetId([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'] ?? null,
+                'created_at' => now(),
+            ]);
+        }
+
+        // Find or create location by city name
+        $location = DB::table('locations')->where('city', $validated['location_id'])->first();
+        
+        if ($location) {
+            $locationId = $location->id;
+        } else {
+            // Create new location if it doesn't exist
+            $locationId = DB::table('locations')->insertGetId([
+                'city' => $validated['location_id'],
+                'district' => '',
+                'country' => 'Bangladesh',
+            ]);
+        }
 
         // Create aid request
         DB::table('aid_requests')->insert([
             'person_id' => $personId,
-            'location_id' => $validated['location_id'],
+            'location_id' => $locationId,
             'aid_type_id' => implode(',', $validated['aid_type_ids']),
             'description' => $validated['description'],
             'status' => 'pending',

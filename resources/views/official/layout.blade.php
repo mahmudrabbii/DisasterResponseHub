@@ -85,14 +85,6 @@
                     </div>
                 </section>
             @endif
-                                <h4>{{ $alert->title }}</h4>
-                                <p>{{ $alert->message }}</p>
-                                <span class="alert-time">{{ $alert->created_at }}</span>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
 
             @yield('content')
         </main>

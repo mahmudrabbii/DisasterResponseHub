@@ -37,6 +37,9 @@
 
             <div class="form-group">
                 <label for="location_id">Your Location *</label>
+                <input id="location_id" name="location_id" type="text" value="{{ old('location_id') }}" placeholder="e.g., Dhaka, Ward 5" required>
+
+                <!--
                 <select id="location_id" name="location_id" required>
                     <option value="">Select your location</option>
                     @foreach ($locations as $location)
@@ -45,6 +48,8 @@
                         </option>
                     @endforeach
                 </select>
+                -->
+                
                 @error('location_id') <span class="error-text">{{ $message }}</span> @enderror
             </div>
 
