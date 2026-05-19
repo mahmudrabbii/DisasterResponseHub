@@ -602,7 +602,6 @@ class OfficialController extends Controller
             ->where('id', $requestId)
             ->update([
                 'status' => $validated['status'],
-                'updated_at' => now(),
             ]);
 
         return redirect()

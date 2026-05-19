@@ -794,8 +794,30 @@ th {
     background: #fecaca;
 }
 
+.btn-danger-small {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #dc2626;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #dc2626;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
 .inline-delete {
     display: inline;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .status-pill {

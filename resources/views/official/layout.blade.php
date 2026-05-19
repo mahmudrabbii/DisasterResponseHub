@@ -34,7 +34,7 @@
             <a class="nav-link {{ ($activePage ?? '') === 'community-supports' ? 'active' : '' }}" href="{{ route('official.community-supports') }}">Community Support</a>
             <a class="nav-link {{ ($activePage ?? '') === 'policies' ? 'active' : '' }}" href="{{ route('official.policies') }}">Policies</a>
             <a class="nav-link {{ ($activePage ?? '') === 'public-disaster-reports' ? 'active' : '' }}" href="{{ route('official.public-disaster-reports') }}">Public Disaster Reports</a>
-            <a class="nav-link {{ ($activePage ?? '') === 'public-help-requests' ? 'active' : '' }}" href="{{ route('official.public-help-requests') }}">Help Requests</a>
+            <a class="nav-link {{ ($activePage ?? '') === 'public-help-requests' ? 'active' : '' }}" href="{{ route('official.public-help-requests') }}">Aid Requests</a>
         </nav>
 
         <div class="sidebar-card">
